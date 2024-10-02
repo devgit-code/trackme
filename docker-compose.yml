@@ -1,0 +1,64 @@
+services:
+    frankenphp:
+        image: trackme/frankenphp
+        # uncomment the following line if you want to use a custom Dockerfile
+        build: /opt/trackme.info
+        # uncomment the following line if you want to run this in a production environment
+        # restart: always
+        volumes:
+        - /opt/trackme.info:/app
+        - /opt/trackme.info/Caddyfile:/etc/caddy/Caddyfile
+        # comment the following line in production, it allows to have nice human-readable logs in dev
+        # tty: true
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.trackme.rule=Host(`trackme.info`)"
+            - "traefik.http.routers.trackme.entrypoints=websecure"
+            - "traefik.http.services.trackme.loadbalancer.server.port=80"
+            - "traefik.http.routers.trackme.service=trackme"
+            - "traefik.http.routers.trackme.tls.certresolver=leresolver"
+        networks:
+            - trackme
+    mariadb:
+        image: 'mariadb:latest'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'trackme-mysql:/var/lib/mysql'
+        networks:
+            - trackme
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+    redis:
+        image: 'redis:alpine'
+
+        volumes:
+            - 'trackme-redis:/data'
+        networks:
+            - trackme
+        healthcheck:
+            test:
+                - CMD
+                - redis-cli
+                - ping
+            retries: 3
+            timeout: 5s
+networks:
+    trackme:
+        driver: bridge
+volumes:
+    trackme-mysql:
+        driver: local
+    trackme-redis:
+        driver: local

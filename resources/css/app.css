@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-bg-fix {
+    filter: blur(10px);
+    transform: scale(1.1);
+    /* filter: blur(10px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="a"><feComponentTransfer><feFuncA type="linear" slope="10"/></feComponentTransfer></filter>#a'); */
+    -o-object-fit: cover;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    z-index: -10;
+    position: fixed;
+}
+img.preview-image {
+    max-width: 400px;
+    max-height: 400px;
+}
+.h-128{
+    height: 24rem;
+}
+@media print {
+    body *:not(.printable, .printable *) {
+        /* hide everything but printable elements and their children */
+        display: none;
+    }
+}

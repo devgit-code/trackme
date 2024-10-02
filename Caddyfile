@@ -1,0 +1,12 @@
+{
+	frankenphp
+	order php_server before file_server
+}
+:80 {
+    root * /app/public
+	php_server
+	route {
+		header           Cache-Control max-age=3600
+		header /build/* Cache-Control max-age=31536000
+	}
+}
