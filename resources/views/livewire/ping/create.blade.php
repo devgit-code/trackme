@@ -18,6 +18,9 @@ new class extends Component {
     #[Rule('required|max:4096')]
     public $comment;
 
+    #[Rule('nullable|numeric|max:1000000')]
+    public $code;
+
     #[Rule('nullable|numeric')]
     public $lat;
 
@@ -38,6 +41,33 @@ new class extends Component {
         $this->authorize('create', $this->tag);
 
         $validated = $this->validate();
+
+        //get lat,lon from zipcode
+        $url = "https://pcmiler.alk.com/apis/rest/v1.0/Service.svc/locations?country=US&postcode=" . $validated['code'];
+
+        $options = [
+            'http' => [
+                'header' => "Authorization: 2D3C139AAA563B4495A0A1C786664F0B\r\n",
+                'method' => 'GET'
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+
+        // Check for errors
+        if ($response === FALSE) {
+            dd( "Error occurred");
+        }
+
+        $data = json_decode($response, true);
+        if(!empty($data[0]['Errors'])){
+            dd( "Wrong Zip code");
+        }
+
+        $validated['lat'] = $data[0]['Coords']['Lat'];
+        $validated['lon'] = $data[0]['Coords']['Lon'];
+        $validated['accuracy'] = 10000;
 
         if (auth()->user()) {
             $this->tag->pings()->create(
@@ -77,6 +107,8 @@ new class extends Component {
 
             <x-textarea wire:model="comment" required autofocus :label="__('ping.comment')"
                         placeholder="{{ __('I found this at the park!!') }}" />
+
+            <x-input wire:model="code" required :label="__('ping.code')"/>
 
             <div class="flex flex-row flex-wrap content-center justify-between gap-4">
                 <div class="grid content-center">
