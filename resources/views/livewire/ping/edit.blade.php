@@ -38,6 +38,7 @@ new class extends Component {
 
     public function update(): void
     {
+        dd('here');
         $this->authorize('update', $this->ping);
 
         $validated = $this->validate();

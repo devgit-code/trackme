@@ -31,6 +31,9 @@ new class extends Component {
 
     public function mount()
     {
+        // $tags = Tag::where('share_code', $this->uid);
+        // dd($tags);
+
         if (Tag::where('share_code', $this->uid)->first()) {
             $this->tag = Tag::where('share_code', $this->uid)->first();
         } else {
