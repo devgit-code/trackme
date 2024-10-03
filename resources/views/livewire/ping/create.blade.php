@@ -42,7 +42,7 @@ new class extends Component {
 
         $validated = $this->validate();
 
-        //get lat,lon from zipcode
+        //** */ start of get lat,lon from zipcode
         $url = "https://pcmiler.alk.com/apis/rest/v1.0/Service.svc/locations?country=US&postcode=" . $validated['code'];
 
         $options = [
@@ -68,6 +68,7 @@ new class extends Component {
         $validated['lat'] = $data[0]['Coords']['Lat'];
         $validated['lon'] = $data[0]['Coords']['Lon'];
         $validated['accuracy'] = 10000;
+        //** end of get code */
 
         if (auth()->user()) {
             $this->tag->pings()->create(

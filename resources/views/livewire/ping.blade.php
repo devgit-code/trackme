@@ -20,6 +20,9 @@ new class extends Component {
     #[Rule('required|max:4096')]
     public $comment;
 
+    #[Rule('nullable|numeric|max:1000000')]
+    public $code;
+
     #[Rule('nullable|numeric')]
     public $lat;
 
@@ -53,6 +56,34 @@ new class extends Component {
         $validated = $this->validate();
 
         $validated['ip_address'] = Request::ip();
+
+ //** */ start of get lat,lon from zipcode
+        $url = "https://pcmiler.alk.com/apis/rest/v1.0/Service.svc/locations?country=US&postcode=" . $validated['code'];
+
+        $options = [
+            'http' => [
+                'header' => "Authorization: 2D3C139AAA563B4495A0A1C786664F0B\r\n",
+                'method' => 'GET'
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+
+        // Check for errors
+        if ($response === FALSE) {
+            dd( "Error occurred");
+        }
+
+        $data = json_decode($response, true);
+        if(!empty($data[0]['Errors'])){
+            dd( "Wrong Zip code");
+        }
+
+        $validated['lat'] = $data[0]['Coords']['Lat'];
+        $validated['lon'] = $data[0]['Coords']['Lon'];
+        $validated['accuracy'] = 10000;
+        //** end of get code */
 
         if (auth()->user()) {
             $this->ping->update($validated);
@@ -89,6 +120,7 @@ new class extends Component {
     <form x-cloak x-show="editing" wire:submit="update">
         <div class="flex flex-col gap-2">
             <x-textarea wire:model="comment" placeholder="{{ __('I found this at the park!!') }}" />
+            <x-input wire:model="code" required :label="__('ping.code')"/>
             <x-toggle md :label="__('ping.edit-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"
                       x-on:change="requestLocation($el, $data, $wire)" />
             <span class="block text-sm text-gray-400">
