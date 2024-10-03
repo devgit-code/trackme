@@ -9,7 +9,7 @@ new class extends Component {
 
     public function mount()
     {
-        $this->tags = Auth::user()->tags;
+        $this->tags = auth()->user()->tags;
     }
 }; ?>
 
