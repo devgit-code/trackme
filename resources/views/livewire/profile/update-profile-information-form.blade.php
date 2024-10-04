@@ -7,13 +7,14 @@ use Livewire\Volt\Component;
 
 new class extends Component {
     public string $name = '';
-
     public string $email = '';
+    // public string $phone = '';
 
     public function mount(): void
     {
         $this->name = auth()->user()->name;
         $this->email = auth()->user()->email;
+        // $this->phone = auth()->user()->phone;
     }
 
     public function updateProfileInformation(): void
@@ -23,6 +24,7 @@ new class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            // 'phone' => ['required', 'string', 'max:255'],
         ]);
 
         $user->fill($validated);
@@ -92,6 +94,10 @@ new class extends Component {
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input wire:model="phone" :label="__('Phone Number')" required autocomplete="phone" />
         </div>
 
         <div class="flex items-center gap-4">
