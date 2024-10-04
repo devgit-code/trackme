@@ -100,8 +100,31 @@ new class extends Component {
     public function report(Ping $ping): void
     {
         //
-        $report = Report::where(['user_id', 'ping_id'], [auth()->user()->id, $this->ping->id]);
-        dd($report);
+        // $exists = Report::where('user_id', auth()->user()->id)->where('ping_id', $this->ping->id)->exists();
+        $exists = Report::where('user_id', auth()->user()->id)
+                        ->where('ping_id', $this->ping->id)
+                        ->exists();
+
+        if($exists){
+            $this->notification()->warning($title = 'Already reported!');
+            // $this->dispatch('ping-created');
+        }else{
+            $count = Report::where('ping_id', $this->ping->id)->count();
+
+            $new = Report::create([
+                'user_id' => auth()->user()->id,
+                'ping_id' => $this->ping->id,
+                // 'reason' => 'spam'
+            ]);
+            $this->notification()->success($title = 'Reported successfully!');
+
+            if($count == 2)
+            {
+                $this->ping->delete();
+                // $this->notification()->warning($title = 'This comment removed!');
+                $this->dispatch('ping-created');
+            }
+        }
     }
 
     public function delete(Ping $ping): void
@@ -164,9 +187,11 @@ new class extends Component {
             @can('update', $ping)
                 <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
             @endcan
+            @if (auth()->user())
             @cannot('update', $ping)
                 <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
             @endcannot
+            @endif
         </div>
     </x-slot>
 </x-card>

@@ -2,6 +2,7 @@
 
 use App\Models\Tag;
 use App\Enums\TagType;
+use App\Providers\RouteServiceProvider;
 
 use WireUi\Traits\Actions;
 use Livewire\Attributes\Rule;
@@ -31,24 +32,27 @@ new class extends Component {
 
     public function mount()
     {
-        if (auth()->user()) {
             if (Tag::where('share_code', $this->uid)->first()) {
                 $this->tag = Tag::where('share_code', $this->uid)->first();
             } else {
                 try {
                     $this->tag = Tag::findOrFail($this->uid);
                 } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                    // $this->redirect(route('create-tag', ['uid' => $this->uid]), navigate: true);
-                    header("Location: /create-qr-tag/" . $this->uid);
-                    exit();
+                    if (auth()->user()) {
+                        $this->redirect(route('create-tag', ['uid' => $this->uid]), navigate: true);
+                        return;
+                    }else{
+                        $this->redirect(session('url.intended', RouteServiceProvider::HOME), navigate: true);
+                        return;
+                        // session()->flash('status', 'sFirst login');
+                        // return $this->redirect(route('login'), navigate: true);
+                    }
                 }
             }
             $this->name = $this->tag->name;
             $this->description = $this->tag->description;
             $this->type = $this->tag->type;
-        }else{
-            $this->redirect('/login', navigate: true);
-        }
+        
     }
 
     public function update(): void
