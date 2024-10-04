@@ -2,6 +2,7 @@
 
 use App\Models\Tag;
 use App\Models\Ping;
+use App\Models\Report;
 use App\Enums\TagType;
 use Livewire\Attributes\Rule;
 use WireUi\Traits\Actions;
@@ -19,6 +20,9 @@ new class extends Component {
 
     #[Rule('required|max:4096')]
     public $comment;
+
+    #[Rule('nullable|numeric|max:1000000')]
+    public $code;
 
     #[Rule('nullable|numeric')]
     public $lat;
@@ -54,6 +58,36 @@ new class extends Component {
 
         $validated['ip_address'] = Request::ip();
 
+        if($validated['code'] == "") //miss zip code validation
+            dd('validation error');
+ //** */ start of get lat,lon from zipcode
+        $url = "https://pcmiler.alk.com/apis/rest/v1.0/Service.svc/locations?country=US&postcode=" . $validated['code'];
+
+        $options = [
+            'http' => [
+                'header' => "Authorization: 2D3C139AAA563B4495A0A1C786664F0B\r\n",
+                'method' => 'GET'
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+
+        // Check for errors
+        if ($response === FALSE) {
+            dd( "Error occurred");
+        }
+
+        $data = json_decode($response, true);
+        if(!empty($data[0]['Errors'])){
+            dd( "Wrong Zip code");
+        }
+
+        $validated['lat'] = $data[0]['Coords']['Lat'];
+        $validated['lon'] = $data[0]['Coords']['Lon'];
+        $validated['accuracy'] = 10000;
+        //** end of get code */
+
         if (auth()->user()) {
             $this->ping->update($validated);
             $this->dispatch('ping-created');
@@ -61,6 +95,13 @@ new class extends Component {
             // Create unverified account for commenter
         }
         $this->comment = '';
+    }
+
+    public function report(Ping $ping): void
+    {
+        //
+        $report = Report::where(['user_id', 'ping_id'], [auth()->user()->id, $this->ping->id]);
+        dd($report);
     }
 
     public function delete(Ping $ping): void
@@ -86,9 +127,10 @@ new class extends Component {
             </span>
         </div>
     </x-slot>
-    <form x-cloak x-show="editing" wire:submit="update">
+    <form x-cloak x-show="editing" wire:submit="update" x-data="{ open: false }">
         <div class="flex flex-col gap-2">
             <x-textarea wire:model="comment" placeholder="{{ __('I found this at the park!!') }}" />
+            <x-input wire:model="code" required :label="__('ping.code')"/>
             <x-toggle md :label="__('ping.edit-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"
                       x-on:change="requestLocation($el, $data, $wire)" />
             <span class="block text-sm text-gray-400">
@@ -122,6 +164,9 @@ new class extends Component {
             @can('update', $ping)
                 <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
             @endcan
+            @cannot('update', $ping)
+                <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
+            @endcannot
         </div>
     </x-slot>
 </x-card>

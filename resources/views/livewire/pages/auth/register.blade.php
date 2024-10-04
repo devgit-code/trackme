@@ -44,6 +44,8 @@ new #[Layout('layouts.guest')] class extends Component {
                 type="text" required autofocus autocomplete="name" />
             <x-input wire:model="email" label="{{ __('Email') }}" placeholder="{{ __('john.smith@gmail.com') }}"
                 icon="at-symbol" type="email" required autocomplete="name" />
+            <x-input wire:model="phone" label="{{ __('Phone Number') }}" placeholder="{{ __('+') }}"
+                icon="phone" type="string" autocomplete="name" />
             <x-input wire:model="password" label="{{ __('Password') }}" placeholder="{{ __('********') }}"
                 icon="lock-closed" type="password" required autocomplete="name" />
             <x-input wire:model="password_confirmation" label="{{ __('Confirm Password') }}"
