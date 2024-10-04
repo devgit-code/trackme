@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
-use Exception;
+// use Exception;
 use Twilio\Rest\Client;
 
 /*
@@ -25,6 +25,10 @@ Route::group(['middleware' => 'cors'], function () {
     Route::view('/profile', 'profile')
         ->middleware(['auth', 'web'])
         ->name('profile');
+
+    Route::view('/create-qr-tag/{uid}', 'create-qr-tag')
+        ->middleware(['web'])
+        ->name('create-qr-tag');
 
     Route::view('/create-tag', 'create-tag')
         ->middleware(['web'])

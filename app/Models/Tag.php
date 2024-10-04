@@ -20,6 +20,7 @@ class Tag extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'type',
         'description',
@@ -31,7 +32,6 @@ class Tag extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'id',
         'user_id',
         'share_code',
     ];
@@ -74,7 +74,7 @@ class Tag extends Model
         parent::boot();
 
         static::creating(function ($tag) {
-            $tag->id = Str::random(8);
+            // $tag->id = Str::random(8);
             $tag->share_code = Str::random(8);
         });
     }

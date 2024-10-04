@@ -7,6 +7,11 @@ use Livewire\Attributes\Rule;
 use Livewire\Volt\Component;
 
 new class extends Component {
+    public $uid;
+
+    // #[Rule('required|string|max:255')]
+    // public string $email = '';
+
     #[Rule('required|string|max:255')]
     public string $name = '';
 
@@ -19,7 +24,7 @@ new class extends Component {
     public function save(): void
     {
         $validated = $this->validate();
-        $validated['id'] = Str::random(8);
+        $validated['id'] = $this->uid;
 
         $new_tag = auth()
             ->user()

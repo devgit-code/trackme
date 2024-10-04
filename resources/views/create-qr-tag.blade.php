@@ -4,7 +4,7 @@
             {{ __('tag.create') }}
         </x-slot>
         <x-card title="{{ __('tag.create') }}" rounded="rounded-none sm:rounded-lg">
-            <livewire:tag.create/>
+            <livewire:tag.create-qr :uid="$uid"/>
         </x-card>
     </div>
 </x-app-layout>
