@@ -62,7 +62,8 @@ new class extends Component {
 
         $data = json_decode($response, true);
         if(!empty($data[0]['Errors'])){
-            dd( "Wrong Zip code");
+            $this->notification()->error($title = 'Wrong Zip code!');
+            // $this->dispatch('ping-created');
         }
 
         $validated['lat'] = $data[0]['Coords']['Lat'];

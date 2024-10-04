@@ -1,5 +1,6 @@
 @php
     use App\Models\Tag;
+    use App\Models\Ping;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -41,7 +42,17 @@
                     @endauth
                 </div>
                 <p class="prose">{{ __('msg.welcome') }}</p>
-                @php $sample_data = '[[35.306389,-78.323889,"Isaac Alich\n4 days ago"], [35.53965,-82.55095,"John Smith\n2 weeks ago"], [36.085336,-80.241745,"Jane Doe\n1 month ago"]]'; @endphp
+                @php 
+                $latestPing = Ping::latest('created_at')->first();
+                if($latestPing)
+                {
+                    $tag = Tag::find($latestPing->tag_id);
+                    $sample_data = json_encode($tag->getLocations());
+                }else
+                {
+                    $sample_data = '[[35.306389,-78.323889,"Isaac Alich\n4 days ago"], [35.53965,-82.55095,"John Smith\n2 weeks ago"], [36.085336,-80.241745,"Jane Doe\n1 month ago"]]'; 
+                }
+                @endphp
                 <x-map class="h-[350px]" :locations="$sample_data" />
 
                 <div class="sm:col-span-2">
