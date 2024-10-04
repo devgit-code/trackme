@@ -8,13 +8,13 @@ use Livewire\Volt\Component;
 new class extends Component {
     public string $name = '';
     public string $email = '';
-    // public string $phone = '';
+    public string $phone = '';
 
     public function mount(): void
     {
         $this->name = auth()->user()->name;
         $this->email = auth()->user()->email;
-        // $this->phone = auth()->user()->phone;
+        $this->phone = auth()->user()->phone;
     }
 
     public function updateProfileInformation(): void
@@ -24,7 +24,7 @@ new class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            // 'phone' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:255'],
         ]);
 
         $user->fill($validated);

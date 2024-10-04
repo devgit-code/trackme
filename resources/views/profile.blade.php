@@ -24,12 +24,6 @@ $tags = Tag::all();
 
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                 <div class="max-w-lg">
-                    <livewire:tag.showTable />
-                </div>
-            </div>
-
-            <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                <div class="max-w-lg">
                     <livewire:profile.send-message-form />
                 </div>
             </div>

@@ -114,60 +114,124 @@ new class extends Component {
 }; ?>
 <div class="flex flex-row gap-3" x-data="{ editing: false }">
     <div>
-        <x-avatar class="mt-0.5 hidden shadow-md sm:flex" lg squared :src="$ping->user->gravatar" />
+        <x-avatar id="openstatisticsModal" class="mt-0.5 hidden shadow-md sm:flex" lg squared :src="$ping->user->gravatar" />
+        <!-- Modal dialog -->
+        <div id="statisticsModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg w-1/2 p-6">
+                <livewire:profile.show-statistics-form  />
+                <div class="mt-4 flex justify-end">
+                    <!-- Cancel Button -->
+                    <button id="closestatisticsModal" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
     <x-card color="border border-gray-200" :wire:key="$ping->id">
         <x-slot name="title">
             <div class="flex gap-1.5">
                 <span>{{ $ping->user->name }}</span>
                 <span
-                      class="inline-flex items-center text-gray-400">{{ $ping->created_at->diffForHumans() }}@unless ($ping->created_at->eq($ping->updated_at))
-                    <x-icon name="pencil" class="h-4 w-4" />
-                @endunless
-            </span>
-        </div>
-    </x-slot>
-    <form x-cloak x-show="editing" wire:submit="update" x-data="{ open: false }">
-        <div class="flex flex-col gap-2">
-            <x-textarea wire:model="comment" placeholder="{{ __('I found this at the park!!') }}" />
-            <x-input wire:model="code" required :label="__('ping.code')"/>
-            <x-toggle md :label="__('ping.edit-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"
-                      x-on:change="requestLocation($el, $data, $wire)" />
-            <span class="block text-sm text-gray-400">
-                @if ($trackLocation)
-                    @if ($accuracy > 10000)
-                        <span class="block text-sm text-red-400">Insufficient Accuracy:
-                            {{ round($accuracy / 1000, 2) }}km (need &lt;10km) </span>
-                    @else
-                        <span class="block text-sm text-gray-400">
-                            Current Location: {{ round($lat, 4) }}, {{ round($lon, 4) }}
-                            ({{ round($accuracy / 1000, 2) }}km acc.)
-                        </span>
+                    class="inline-flex items-center text-gray-400">{{ $ping->created_at->diffForHumans() }}
+                    @unless ($ping->created_at->eq($ping->updated_at))
+                        <x-icon name="pencil" class="h-4 w-4" />
+                    @endunless
+                </span>
+                <x-button id="openmsgModal" sm alt="Send message" icon="annotation" warning />
+                <!-- Modal dialog -->
+                <div id="msgModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+                    <div class="bg-white rounded-lg shadow-lg w-1/3 p-6">
+                        <h2 class="text-xl font-semibold mb-4">Send a Message</h2>
+
+                        <input type="text" id="messageTitle" class="w-full p-2 mb-4 border border-gray-300 rounded-md" placeholder="Subject">
+                        <!-- Textarea -->
+                        <textarea id="messageText" rows="4" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter your message"></textarea>
+
+                        <!-- Modal Buttons -->
+                        <div class="mt-4 flex justify-end">
+                            <!-- Cancel Button -->
+                            <button id="closemsgModal" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Cancel</button>
+
+                            <!-- Confirm Button -->
+                            <button id="confirmMessage" class="bg-blue-500 text-white px-4 py-2 rounded">Send</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Optional script for modal toggle -->
+                <script>
+                    // Open modal
+                    document.getElementById('openmsgModal').addEventListener('click', function() {
+                        document.getElementById('msgModal').classList.remove('hidden');
+                    });
+
+                    document.getElementById('openstatisticsModal').addEventListener('click', function() {
+                        document.getElementById('statisticsModal').classList.remove('hidden');
+                    });
+
+                    // Close modal
+                    document.getElementById('closemsgModal').addEventListener('click', function() {
+                        document.getElementById('msgModal').classList.add('hidden');
+                    });
+                    document.getElementById('closestatisticsModal').addEventListener('click', function() {
+                        document.getElementById('statisticsModal').classList.add('hidden');
+                    });
+
+                    // Confirm action
+                    document.getElementById('confirmMessage').addEventListener('click', function() {
+                        let title = document.getElementById('messageTitle').value;
+                        let message = document.getElementById('messageText').value;
+                        if (title && message) {
+                            // Here you can send the message to the server using an AJAX request or PHP form submission
+                            console.log("Title: " + title);
+                            console.log("Message sent: " + message);
+                            document.getElementById('msgModal').classList.add('hidden'); // Hide modal after confirmation
+                        } else {
+                            alert("Please enter a message before confirming.");
+                        }
+                    });
+                </script>
+            </div>
+        </x-slot>
+        <form x-cloak x-show="editing" wire:submit="update" x-data="{ open: false }">
+            <div class="flex flex-col gap-2">
+                <x-textarea wire:model="comment" placeholder="{{ __('I found this at the park!!') }}" />
+                <x-input wire:model="code" required :label="__('ping.code')"/>
+                <x-toggle md :label="__('ping.edit-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"
+                        x-on:change="requestLocation($el, $data, $wire)" />
+                <span class="block text-sm text-gray-400">
+                    @if ($trackLocation)
+                        @if ($accuracy > 10000)
+                            <span class="block text-sm text-red-400">Insufficient Accuracy:
+                                {{ round($accuracy / 1000, 2) }}km (need &lt;10km) </span>
+                        @else
+                            <span class="block text-sm text-gray-400">
+                                Current Location: {{ round($lat, 4) }}, {{ round($lon, 4) }}
+                                ({{ round($accuracy / 1000, 2) }}km acc.)
+                            </span>
+                        @endif
                     @endif
+                </span>
+                <x-button spinner="update" wire:click="update" sm label="Save" :disabled="$accuracy > 10000" icon="pencil"
+                        primary />
+            </div>
+        </form>
+        <p x-show="!editing">{{ $ping->comment }}</p>
+        <x-slot name="action">
+            <div class="flex gap-1.5">
+                @if ($ping->hasLocation)
+                    <x-badge sm icon="globe" outline zinc label="{{ $ping->loc_name }}" />
                 @endif
-            </span>
-            <x-button spinner="update" wire:click="update" sm label="Save" :disabled="$accuracy > 10000" icon="pencil"
-                      primary />
-        </div>
-    </form>
-    <p x-show="!editing">{{ $ping->comment }}</p>
-    <x-slot name="action">
-        <div class="flex gap-1.5">
-            @if ($ping->hasLocation)
-                <x-badge sm icon="globe" outline zinc label="{{ $ping->loc_name }}" />
-            @endif
-            @can('delete', $ping)
-                <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
-            @endcan
-            <x-button x-cloak x-show="editing" x-on:click="editing = false" sm alt="Cancel"
-                      class="ring-2 ring-offset-2" icon="x" primary />
-            @can('update', $ping)
-                <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
-            @endcan
-            @cannot('update', $ping)
-                <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
-            @endcannot
-        </div>
-    </x-slot>
-</x-card>
+                @can('delete', $ping)
+                    <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
+                @endcan
+                <x-button x-cloak x-show="editing" x-on:click="editing = false" sm alt="Cancel"
+                        class="ring-2 ring-offset-2" icon="x" primary />
+                @can('update', $ping)
+                    <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
+                @endcan
+                @cannot('update', $ping)
+                    <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
+                @endcannot
+            </div>
+        </x-slot>
+    </x-card>
 </div>

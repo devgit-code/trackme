@@ -13,6 +13,8 @@ new #[Layout('layouts.guest')] class extends Component {
 
     public string $email = '';
 
+    public string $phone = '';
+
     public string $password = '';
 
     public string $password_confirmation = '';
@@ -22,6 +24,7 @@ new #[Layout('layouts.guest')] class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'phone' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
