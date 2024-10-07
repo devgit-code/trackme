@@ -32,27 +32,32 @@ new class extends Component {
 
     public function mount()
     {
-            if (Tag::where('share_code', $this->uid)->first()) {
-                $this->tag = Tag::where('share_code', $this->uid)->first();
-            } else {
-                try {
-                    $this->tag = Tag::findOrFail($this->uid);
-                } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                    if (auth()->user()) {
-                        $this->redirect(route('create-tag', ['uid' => $this->uid]), navigate: true);
-                        return;
-                    }else{
-                        $this->redirect(session('url.intended', RouteServiceProvider::HOME), navigate: true);
-                        return;
-                        // session()->flash('status', 'sFirst login');
-                        // return $this->redirect(route('login'), navigate: true);
-                    }
+
+        if(!$this->isStrRandom($this->uid, 8))
+        {
+            dd('wrong tag name');
+            return;
+        }
+        if (Tag::where('share_code', $this->uid)->first()) {
+            $this->tag = Tag::where('share_code', $this->uid)->first();
+        } else {
+            try {
+                $this->tag = Tag::findOrFail($this->uid);
+            } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                if (auth()->user()) {
+                    $this->redirect(route('create-tag', ['uid' => $this->uid]), navigate: true);
+                    return;
+                } else {
+                    $this->redirect(session('url.intended', RouteServiceProvider::HOME), navigate: true);
+                    return;
+                    // session()->flash('status', 'sFirst login');
+                    // return $this->redirect(route('login'), navigate: true);
                 }
             }
-            $this->name = $this->tag->name;
-            $this->description = $this->tag->description;
-            $this->type = $this->tag->type;
-        
+        }
+        $this->name = $this->tag->name;
+        $this->description = $this->tag->description;
+        $this->type = $this->tag->type;
     }
 
     public function update(): void
@@ -70,6 +75,11 @@ new class extends Component {
         $this->tag->delete();
         $this->notification()->success($title = 'Tag Deleted!');
         $this->redirect(route('my-tags'), navigate: true);
+    }
+
+    private function isStrRandom($string, $length)
+    {
+        return preg_match('/^[a-zA-Z0-9]+$/', $string) && strlen($string) === $length;
     }
 
     #[On('ping-created')]

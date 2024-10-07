@@ -12,4 +12,5 @@ return [
     'traveller' => 'Traveller',
     'lost-and-found' => 'Lost and Found',
     'my-tags' => 'My Tags',
+    'wrong' => 'Wrong Tag',
 ];

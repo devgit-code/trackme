@@ -15,6 +15,7 @@ use Twilio\Rest\Client;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::group(['middleware' => 'cors'], function () {
     Route::view('/', 'welcome');
 
@@ -49,5 +50,9 @@ Route::group(['middleware' => 'cors'], function () {
     Route::view('/scan', 'scan-qrcode')
         ->middleware(['web'])
         ->name('scan-tag');
+
+    Route::view('/wrong-tag', 'wrong-tag')
+        ->middleware(['web'])
+        ->name('wrong-tag');
 });
 require __DIR__ . '/auth.php';
