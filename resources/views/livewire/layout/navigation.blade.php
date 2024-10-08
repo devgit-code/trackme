@@ -40,10 +40,10 @@ new class extends Component {
                         <x-icon name="pencil-alt" class="h-5 w-5 sm:me-1" />Create<span
                               class="hidden sm:ms-1 sm:block">Tag</span>
                     </x-nav-link>
-                    <x-nav-link :href="route('scan-tag')" :active="request()->routeIs('scan-tag')" wire:navigate>
+                    <!-- <x-nav-link :href="route('scan-tag')" :active="request()->routeIs('scan-tag')" wire:navigate invisible>
                         <x-icon name="qrcode" class="h-5 w-5 sm:me-1" />Scan<span
                               class="hidden sm:ms-1 sm:block">Tag</span>
-                    </x-nav-link>
+                    </x-nav-link> -->
                 </div>
             </div>
 
