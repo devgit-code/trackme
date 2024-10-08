@@ -29,10 +29,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'email',
         'email_verified_at',
         'updated_at',
-        'phone',
         'password',
         'remember_token',
     ];
@@ -64,5 +62,10 @@ class User extends Authenticatable
     public function pings(): HasMany
     {
         return $this->hasMany(Ping::class);
+    }
+
+    public function follows(): HasMany
+    {
+        return $this->hasMany(Follow::class)->orderBy('created_at', 'desc');
     }
 }
