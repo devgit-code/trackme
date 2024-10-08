@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pings', function (Blueprint $table) {
-            $table->string('loc_name', 64)->nullable()->change();
+        Schema::create('reports', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('ping_id')->references('id')->on('pings')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pings', function (Blueprint $table) {
-            $table->string('loc_name', 64)->change();
-        });
+        Schema::dropIfExists('reports');
     }
 };

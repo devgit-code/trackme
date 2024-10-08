@@ -57,11 +57,11 @@ new class extends Component {
 
         // Check for errors
         if ($response === FALSE) {
-            dd( "Error occurred");
+            dd("Error occurred");
         }
 
         $data = json_decode($response, true);
-        if(!empty($data[0]['Errors'])){
+        if (!empty($data[0]['Errors'])) {
             $this->notification()->error($title = 'Wrong Zip code!');
             // $this->dispatch('ping-created');
         }
@@ -93,39 +93,39 @@ new class extends Component {
     <div x-cloak x-show="open" class="flex flex-row gap-2 rounded border p-2">
         <div>
             @auth
-                <x-avatar class="mt-6 hidden shadow-md sm:flex" lg squared :src="auth()->user()->gravatar" />
+            <x-avatar class="mt-6 hidden shadow-md sm:flex" lg squared :src="auth()->user()->gravatar" />
             @else
-                <x-avatar class="mt-6 hidden shadow-md sm:flex" lg squared />
+            <x-avatar class="mt-6 hidden shadow-md sm:flex" lg squared />
             @endauth
         </div>
         {{-- I love Belle <3 --}}
         <div class="flex flex-grow flex-col gap-2">
             @guest
-                <x-input wire:model="name" :label="__('ping.name')" required autofocus placeholder="{{ __('Jane Doe') }}"
-                         autocomplete="name" />
-                <x-input wire:model="email" :label="__('ping.email')" required placeholder="{{ __('jane.doe@gmail.com') }}"
-                         autocomplete="email" />
+            <x-input wire:model="name" :label="__('ping.name')" required autofocus placeholder="{{ __('Jane Doe') }}"
+                autocomplete="name" />
+            <x-input wire:model="email" :label="__('ping.email')" required placeholder="{{ __('jane.doe@gmail.com') }}"
+                autocomplete="email" />
             @endguest
 
             <x-textarea wire:model="comment" required autofocus :label="__('ping.comment')"
-                        placeholder="{{ __('I found this at the park!!') }}" />
+                placeholder="{{ __('I found this at the park!!') }}" />
 
-            <x-input wire:model="code" required :label="__('ping.code')"/>
+            <x-input wire:model="code" required :label="__('ping.code')" />
 
             <div class="flex flex-row flex-wrap content-center justify-between gap-4">
                 <div class="grid content-center">
                     <x-toggle md :label="__('ping.new-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"
-                              x-on:change="requestLocation($el, $data)" />
+                        x-on:change="requestLocation($el, $data)" />
                     @if ($trackLocation)
-                        @if ($accuracy > 10000)
-                            <span class="block text-sm text-red-400">Insufficient Accuracy:
-                                {{ round($accuracy / 1000, 2) }}km (need &lt;10km) </span>
-                        @else
-                            <span class="block text-sm text-gray-400">
-                                Current Location: {{ round($lat, 4) }}, {{ round($lon, 4) }}
-                                ({{ round($accuracy / 1000, 2) }}km acc.)
-                            </span>
-                        @endif
+                    @if ($accuracy > 10000)
+                    <span class="block text-sm text-red-400">Insufficient Accuracy:
+                        {{ round($accuracy / 1000, 2) }}km (need &lt;10km) </span>
+                    @else
+                    <span class="block text-sm text-gray-400">
+                        Current Location: {{ round($lat, 4) }}, {{ round($lon, 4) }}
+                        ({{ round($accuracy / 1000, 2) }}km acc.)
+                    </span>
+                    @endif
                     @endif
 
                 </div>
@@ -133,11 +133,18 @@ new class extends Component {
                 <div class="flex flex-wrap items-end gap-2">
                     <x-button flat label="Cancel" spinner="visible" x-on:click="open = false" />
                     <x-button type="submit" primary spinner="save" :disabled="$accuracy > 10000" icon="chat-alt"
-                              :label="__('ping.create')" />
+                        :label="__('ping.create')" />
                 </div>
             </div>
         </div>
     </div>
+
+    @if(!auth()->user())
+    <x-button class="w-full" x-on:click="open = true" x-show="!open" outline primary icon="chat-alt" disabled 
+        label="{{ __('ping.create') }}" />
+    <span style="color:red">For add comment, please login!</span><br>
+    @else
     <x-button class="w-full" x-on:click="open = true" x-show="!open" outline primary icon="chat-alt"
-              label="{{ __('ping.create') }}" />
+        label="{{ __('ping.create') }}" />
+    @endif
 </form>

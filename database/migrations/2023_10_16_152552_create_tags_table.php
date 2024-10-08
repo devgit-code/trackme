@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('share_code', 8)->unique();
             $table->integer('type', false, true);
             $table->string('description', 4096);
+            $table->string('img_url')->nullable();;
             $table->timestamps();
         });
     }

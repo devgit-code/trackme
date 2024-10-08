@@ -18,6 +18,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at');
             $table->string('phone')->unique()->nullable();
             $table->string('password');
+            $table->boolean('auto_approve')->default(false);
+            $table->integer('update_day')->default(0);
+            $table->integer('role')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
