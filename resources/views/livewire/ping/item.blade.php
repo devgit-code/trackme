@@ -56,6 +56,24 @@ new class extends Component {
         }
     }
 
+    public function approve(): void
+    {
+        $this->authorize('update', $this->ping);
+        $validated = $this->validate();
+
+        $validated['is_approved'] = 1;
+        $validated['accuracy'] = 10000;
+
+        if (auth()->user()) {
+            $this->ping->update($validated);
+            // $this->dispatch('ping-created');
+        } else {
+            // Create unverified account for commenter
+        }
+        $this->notification()->success($title = 'Comment approved!');
+        $this->dispatch('ping-created');
+    }
+
     public function update(): void
     {
         $this->authorize('update', $this->ping);
@@ -96,14 +114,14 @@ new class extends Component {
 
         if (auth()->user()) {
             $this->ping->update($validated);
-            $this->dispatch('ping-created');
+            // $this->dispatch('ping-created');
         } else {
             // Create unverified account for commenter
         }
         $this->comment = '';
     }
 
-    public function report(Ping $ping): void
+    public function report(): void
     {
         //
         // $exists = Report::where('user_id', auth()->user()->id)->where('ping_id', $this->ping->id)->exists();
@@ -133,10 +151,10 @@ new class extends Component {
         }
     }
 
-    public function delete(Ping $ping): void
+    public function delete(): void
     {
-        $this->authorize('delete', $ping);
-        $ping->delete();
+        $this->authorize('delete', $this->ping);
+        $this->ping->delete();
         $this->notification()->success($title = 'Comment deleted!');
         $this->dispatch('ping-created');
     }
@@ -158,7 +176,6 @@ new class extends Component {
     <x-card color="border border-gray-200" :wire:key="$ping->id">
         <x-slot name="title">
             <div class="flex gap-1.5">
-            <x-button id="openmsgModal" sm alt="Send message" icon="annotation" warning />
                 <!-- Modal dialog -->
                 <div id="msgModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
                     <div class="bg-white rounded-lg shadow-lg w-1/3 p-6">
@@ -211,6 +228,24 @@ new class extends Component {
                         }
                     });
                 </script>
+
+                @can('update', $ping)
+                    @if($ping->is_approved == 0)
+                        <x-button sm wire:click="approve" alt="Approve Comment" negative>
+                            <span>
+                                <x-icon name="check-circle" class="w-5 h-5" outline />
+                            </span>
+                        </x-button>
+                    @else
+                        <x-button sm alt="Approved" blue disabled>
+                            <span>
+                                <x-icon name="check-circle" class="w-5 h-5" solid />
+                            </span>
+                        </x-button>
+                    @endif
+                    <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
+                @endcan
+
                 <span>{{ $ping->user->name }}</span>
                 <span
                       class="inline-flex items-center text-gray-400">{{ $ping->created_at->diffForHumans() }}@unless ($ping->created_at->eq($ping->updated_at))
@@ -256,18 +291,12 @@ new class extends Component {
             @if ($ping->hasLocation)
                 <x-badge sm icon="globe" outline zinc label="{{ $ping->loc_name }}" />
             @endif
-            @can('delete', $ping)
-                <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
-            @endcan
             <x-button x-cloak x-show="editing" x-on:click="editing = false" sm alt="Cancel"
                       class="ring-2 ring-offset-2" icon="x" primary />
-            @can('update', $ping)
-                <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
-            @endcan
-            @if (auth()->user())
-            @cannot('update', $ping)
+            @if (auth()->id() != $ping->user_id)
                 <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
-            @endcannot
+            @else
+                <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
             @endif
         </div>
     </x-slot>

@@ -35,8 +35,17 @@ new class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-3 mt-5">
-    @foreach ($this->pingsPaginated() as $ping)
-        <livewire:ping.item :ping="$ping">
-    @endforeach
-    {{ $this->pingsPaginated()->links() }}
+    @can('update', 'tag')
+        @foreach ($this->pingsPaginated() as $ping)
+            <livewire:ping.item :ping="$ping">
+        @endforeach
+        {{ $this->pingsPaginated()->links() }}
+    @else
+        @foreach ($this->pingsPaginated() as $ping)
+            @if($ping->is_approved == 1)
+            <livewire:ping.item :ping="$ping">
+            @endif
+        @endforeach
+        {{ $this->pingsPaginated()->links() }}
+    @endcan
 </div>

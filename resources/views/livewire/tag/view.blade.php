@@ -87,13 +87,13 @@ new class extends Component {
 
     public function follow(): void
     {
-        $validated = [
-            'auto_approve' => !$this->auto_approve,
-        ];
+//         $validated = [
+//             'auto_approve' => !$this->auto_approve,
+//         ];
 
-        $ret = $this->tag->update($validated);
-// dd($this->tag);
-        $this->auto_approve = !$this->auto_approve;
+//         $ret = $this->tag->update($validated);
+// // dd($this->tag);
+//         $this->auto_approve = !$this->auto_approve;
     }
 
     private function isStrRandom($string, $length)
@@ -184,13 +184,15 @@ new class extends Component {
             </div>
             <hr class="my-2">
             <x-textarea x-cloak x-show="editing" wire:model.blur="description" wire:blur="update" />
-            <div x-show="editing">
+            <div x-show="editing" class="my-2">
                 <x-toggle label="{{ __('tag.auto-approve') }}" wire:model.blur="auto_approve" wire:blur="update" />
             </div>
             <p x-show="!editing">{{ $description }}</p>
 
             @if($img_url != '')
-            <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
+            <div x-show="!editing" class="my-1">
+                <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
+            </div>
             @endif
         </div>
         <div class="sm:col-span-6 md:col-span-3 lg:col-span-4">

@@ -92,6 +92,7 @@ new class extends Component {
                     'user_id' => auth()->id(),
                     'ip_address' => Request::ip(),
                     'loc_name' => 'Unknown',
+                    'is_approved' => $this->tag->auto_approve,
                 ]),
             );
 
