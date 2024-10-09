@@ -13,4 +13,5 @@ return [
     'lost-and-found' => 'Lost and Found',
     'my-tags' => 'My Tags',
     'wrong' => 'Wrong Tag',
+    'auto-approve' => 'Auto Approve',
 ];

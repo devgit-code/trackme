@@ -170,7 +170,6 @@
 
                 <div class="text-sm font-medium truncate w-40 md:w-auto">{{ $f->getClientOriginalName() }}</div>
                 <div class="flex items-center space-x-1">
-                    <div class="text-xs text-gray-500">{{ Str::bytesToHuman($f->getSize()) }}</div>
                     <div class="text-gray-400 text-xs">&bull;</div>
                     <div class="text-xs text-gray-500 uppercase">{{ $f->getClientOriginalExtension() }}</div>
                 </div>
@@ -206,10 +205,18 @@
                 @error($attributes->wire('model')->value)
                 <p class="text-sm text-red-600" class="mb-2">{{ $message }}</p>
                 @enderror
+<?php
+    $bytes = $file->getSize();
+    $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
+    for ($i = 0; $bytes > 1024; $i++) {
+        $bytes /= 1024;
+    }
+    $str_bytes = round($bytes, 2) . ' ' . $units[$i];
+?>
                 <div class="text-sm font-medium truncate w-40 md:w-auto">{{ $file->getClientOriginalName() }}</div>
                 <div class="flex items-center space-x-1">
-                    <div class="text-xs text-gray-500">{{ Str::bytesToHuman($file->getSize()) }}</div>
+                    <div class="text-xs text-gray-500">{{ $str_bytes }}</div>
                     <div class="text-gray-400 text-xs">&bull;</div>
                     <div class="text-xs text-gray-500 uppercase">{{ $file->getClientOriginalExtension() }}</div>
                 </div>

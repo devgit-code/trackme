@@ -24,6 +24,7 @@ class Tag extends Model
         'name',
         'type',
         'description',
+        'img_url',
     ];
 
     /**

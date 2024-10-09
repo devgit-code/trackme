@@ -28,6 +28,8 @@ new class extends Component {
     #[Rule('required')]
     public TagType $type = TagType::Traveller;
 
+    public $img_url = '';
+
     public $pingLocations = [];
 
     public function mount()
@@ -59,6 +61,7 @@ new class extends Component {
         $this->name = $this->tag->name;
         $this->description = $this->tag->description;
         $this->type = $this->tag->type;
+        $this->img_url = $this->tag->img_url;
     }
 
     public function update(): void
@@ -115,6 +118,7 @@ new class extends Component {
             </h1>
             @if ($tag->user)
             <div class="flex flex-row items-center gap-1 text-gray-500">
+                <span class="font-medium text-gray-700 dark:text-gray-400">Created by:</span>
                 <x-avatar xs :src="$tag->user->gravatar" />
                 <span>{{ $tag->user->name }}</span>
             </div>
@@ -149,6 +153,9 @@ new class extends Component {
             <hr class="my-2">
             <x-textarea x-cloak x-show="editing" wire:model.blur="description" wire:blur="update" />
             <p x-show="!editing">{{ $description }}</p>
+            @if($img_url !== '')
+            <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
+            @endif
         </div>
         <x-map class="h-[350px] sm:col-span-6 md:col-span-3 lg:col-span-4" :locations="json_encode($this->tag->getLocations())" />
         <div class="col-span-1 col-start-1 grid gap-3 sm:col-span-4 sm:col-start-2 lg:col-span-4 lg:col-start-3">

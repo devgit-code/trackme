@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('id', 8)->primary()->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->boolean('auto_approve')->default(false);
             $table->string('share_code', 8)->unique();
             $table->integer('type', false, true);
             $table->string('description', 4096);

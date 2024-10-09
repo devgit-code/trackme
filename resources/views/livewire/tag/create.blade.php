@@ -5,8 +5,12 @@ use App\Models\Tag;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
+use Carbon\Carbon;
 
 new class extends Component {
+    use WithFileUploads;
+
     #[Rule('required|string|max:255')]
     public string $name = '';
 
@@ -15,15 +19,29 @@ new class extends Component {
 
     #[Rule('required')]
     public TagType $type = TagType::Traveller;
-    
-    #[Rule('file')]
-    public $photo;
+
+    #[Rule('boolean')]
+    public bool $auto_approve = false;
+
+    #[Rule('nullable|file|mimes:png,jpg,jpeg,webp|max:12288')]
+    public $image;
 
     public function save(): void
     {
-        dd('hre');
         $validated = $this->validate();
+
+        if($this->image){
+            $timestamp = Carbon::now()->format('Ymd_His');
+            $customFileName = 'file_' . $timestamp . '.' . $this->image->getClientOriginalExtension();
+            $path = $this->image->storeAs('uploads/tags', $customFileName, 'public');
+            
+            $validated['img_url'] = '/storage/' . $path;
+        }else
+            $validated['img_url'] = '';
+
         $validated['id'] = Str::random(8);
+
+        $this->reset('image');
 
         $new_tag = auth()
             ->user()
@@ -50,7 +68,9 @@ new class extends Component {
         <x-textarea wire:model="description" :label="__('tag.description')"
             placeholder="{{ __('This is my prized $2 bill, it has been handed down between many generations.') }}" />
 
-        <x-file-uploader wire:model="photo" :file="$photo" />
+        <x-toggle label="{{ __('tag.auto-approve') }}" wire:model="auto_approve" />
+
+        <x-file-uploader wire:model="image" :file="$image" rules="mimes:jpeg,png,webp"/>
 
         @csrf
         @if(!auth()->user())
