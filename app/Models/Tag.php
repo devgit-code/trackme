@@ -25,6 +25,7 @@ class Tag extends Model
         'type',
         'description',
         'img_url',
+        'auto_approve',
     ];
 
     /**

@@ -28,9 +28,12 @@ new class extends Component {
     #[Rule('required')]
     public TagType $type = TagType::Traveller;
 
+    public $pingLocations = [];
+
     public $img_url = '';
 
-    public $pingLocations = [];
+    #[Rule('boolean')]
+    public bool $auto_approve = false;
 
     public function mount()
     {
@@ -62,6 +65,7 @@ new class extends Component {
         $this->description = $this->tag->description;
         $this->type = $this->tag->type;
         $this->img_url = $this->tag->img_url;
+        $this->auto_approve = $this->tag->auto_approve;
     }
 
     public function update(): void
@@ -79,6 +83,17 @@ new class extends Component {
         $this->tag->delete();
         $this->notification()->success($title = 'Tag Deleted!');
         $this->redirect(route('my-tags'), navigate: true);
+    }
+
+    public function follow(): void
+    {
+        $validated = [
+            'auto_approve' => !$this->auto_approve,
+        ];
+
+        $ret = $this->tag->update($validated);
+// dd($this->tag);
+        $this->auto_approve = !$this->auto_approve;
     }
 
     private function isStrRandom($string, $length)
@@ -131,6 +146,7 @@ new class extends Component {
             @if ($tag->pings->first())
             @if ($tag->pings->firstWhere('loc_name', '!=', null))
             <div class="mt-1 flex flex-row items-center gap-1 text-gray-500">
+                <span class="font-medium text-gray-700 dark:text-gray-400">Last found:</span>
                 <x-icon name="globe" class="h-6 w-6" />
                 <span>{{ $tag->pings->firstWhere('loc_name', '!=', null)->loc_name }}</span>
             </div>
@@ -141,26 +157,48 @@ new class extends Component {
                     ({{ $tag->pings->first()->created_at->diffForHumans() }})</span>
             </div>
             @endif
-            @can('update', $tag)
             <div class="my-2">
+                @can('update', $tag)
                 <x-button x-cloak x-show="editing" x-on:click="editing = !editing" dark icon="arrow-left">Leave Edit
                     Mode</x-button>
                 <x-button x-show="!editing" x-on:click="editing = !editing" dark icon="pencil">Edit</x-button>
                 <x-button x-show="!editing" :href="route('print-tag', ['uid' => $tag->id])" dark icon="printer" wire:navigate>Print</x-button>
                 <x-button x-show="!editing" wire:click="delete" dark icon="trash">Delete</x-button>
+                @else
+                @if(!$this->auto_approve)
+                <x-button wire:click="follow" primary>
+                    <span class="mr-2">
+                        <x-icon name="heart" class="w-5 h-5" outlined />
+                    </span>
+                    {{ __('Follow Item') }}
+                </x-button>
+                @else
+                <x-button wire:click="follow" primary>
+                    <span class="mr-2">
+                        <x-icon name="heart" class="w-5 h-5" solid />
+                    </span>
+                    {{ __('Followed') }}
+                </x-button>
+                @endif
+                @endcan
             </div>
-            @endcan
             <hr class="my-2">
             <x-textarea x-cloak x-show="editing" wire:model.blur="description" wire:blur="update" />
+            <div x-show="editing">
+                <x-toggle label="{{ __('tag.auto-approve') }}" wire:model.blur="auto_approve" wire:blur="update" />
+            </div>
             <p x-show="!editing">{{ $description }}</p>
-            @if($img_url !== '')
+
+            @if($img_url != '')
             <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
             @endif
         </div>
-        <x-map class="h-[350px] sm:col-span-6 md:col-span-3 lg:col-span-4" :locations="json_encode($this->tag->getLocations())" />
-        <div class="col-span-1 col-start-1 grid gap-3 sm:col-span-4 sm:col-start-2 lg:col-span-4 lg:col-start-3">
-            <livewire:ping.create :tag="$tag" />
-            <livewire:ping.list :tag="$tag" />
+        <div class="sm:col-span-6 md:col-span-3 lg:col-span-4">
+            <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations())" />
+            <div class="sm:col-span-4 sm:col-start-2 lg:col-span-4 lg:col-start-3">
+                <livewire:ping.create :tag="$tag" />
+                <livewire:ping.list :tag="$tag" />
+            </div>
         </div>
     </div>
 </div>

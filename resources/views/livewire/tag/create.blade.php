@@ -29,6 +29,7 @@ new class extends Component {
     public function save(): void
     {
         $validated = $this->validate();
+        dd($validated);
 
         if($this->image){
             $timestamp = Carbon::now()->format('Ymd_His');
