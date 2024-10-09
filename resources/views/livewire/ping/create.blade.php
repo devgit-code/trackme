@@ -6,9 +6,12 @@ use Livewire\Attributes\Rule;
 use WireUi\Traits\Actions;
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Request;
+use Livewire\WithFileUploads;
+use Carbon\Carbon;
 
 new class extends Component {
     use Actions;
+    use WithFileUploads;
 
     public Tag $tag;
 
@@ -35,6 +38,9 @@ new class extends Component {
 
     public $visible = false;
     public $trackLocation = false;
+
+    #[Rule('nullable|file|mimes:png,jpg,jpeg,webp|max:12288')]
+    public $image;
 
     public function save(): void
     {
@@ -72,6 +78,15 @@ new class extends Component {
         //** end of get code */
 
         if (auth()->user()) {
+            if($this->image){
+                $timestamp = Carbon::now()->format('Ymd_His');
+                $customFileName = auth()->id() . '_' . $timestamp . '.' . $this->image->getClientOriginalExtension();
+                $path = $this->image->storeAs('uploads/pings', $customFileName, 'public');
+                
+                $validated['img_url'] = '/storage/' . $path;
+            }else
+                $validated['img_url'] = '';
+
             $this->tag->pings()->create(
                 array_merge($validated, [
                     'user_id' => auth()->id(),
@@ -98,7 +113,6 @@ new class extends Component {
             <x-avatar class="mt-6 hidden shadow-md sm:flex" lg squared />
             @endauth
         </div>
-        {{-- I love Belle <3 --}}
         <div class="flex flex-grow flex-col gap-2">
             @guest
             <x-input wire:model="name" :label="__('ping.name')" required autofocus placeholder="{{ __('Jane Doe') }}"
@@ -111,6 +125,7 @@ new class extends Component {
                 placeholder="{{ __('I found this at the park!!') }}" />
 
             <x-input wire:model="code" required :label="__('ping.code')" />
+            <x-file-uploader wire:model="image" :file="$image" rules="mimes:jpeg,png,webp"/>
 
             <div class="flex flex-row flex-wrap content-center justify-between gap-4">
                 <div class="grid content-center">

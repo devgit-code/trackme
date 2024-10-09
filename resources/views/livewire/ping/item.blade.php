@@ -41,12 +41,18 @@ new class extends Component {
     public $visible = false;
     public $trackLocation = false;
 
+    #[Rule('nullable|file|mimes:png,jpg,jpeg,webp|max:12288')]
+    public $image;
+    
+    public $img_url = '';
+
     public function mount(): void
     {
         if (!$this->creating) {
             $this->comment = $this->ping->comment;
             $this->lat = $this->ping->lat;
             $this->lon = $this->ping->lon;
+            $this->img_url = $this->ping->img_url;
         }
     }
 
@@ -236,7 +242,15 @@ new class extends Component {
                       primary />
         </div>
     </form>
-    <p x-show="!editing">{{ $ping->comment }}</p>
+    <div x-show="!editing" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <p class="sm:col-span-2">{{ $ping->comment }}</p>
+        @if($img_url != '')
+            <div class="sm:col-span-1 flex justify-center">
+                <img src="{{ $img_url }}" class="w-16 object-cover" alt="Tag image" />
+            </div>
+        @endif
+
+    </div>
     <x-slot name="action">
         <div class="flex gap-1.5">
             @if ($ping->hasLocation)

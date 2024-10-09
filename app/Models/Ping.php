@@ -29,7 +29,9 @@ class Ping extends Model
         'lon',
         'loc_name',
         'accuracy',
-        'ip_address'
+        'ip_address',
+        'is_approved',
+        'img_url',
         ];
 
         /**

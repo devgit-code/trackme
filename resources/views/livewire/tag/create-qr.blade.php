@@ -36,7 +36,7 @@ new class extends Component {
  
         if($this->image){
             $timestamp = Carbon::now()->format('Ymd_His');
-            $customFileName = 'file_' . $timestamp . '.' . $this->image->getClientOriginalExtension();
+            $customFileName = auth()->id() . '_' . $timestamp . '.' . $this->image->getClientOriginalExtension();
             $path = $this->image->storeAs('uploads/tags', $customFileName, 'public');
             
             $validated['img_url'] = '/storage/' . $path;
