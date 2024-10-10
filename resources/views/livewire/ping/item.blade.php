@@ -124,6 +124,10 @@ new class extends Component {
 
     public function report(): void
     {
+        if(!auth()->user()){
+            $this->notification()->warning($title = 'Login First!');
+            return;
+        }
         //
         // $exists = Report::where('user_id', auth()->user()->id)->where('ping_id', $this->ping->id)->exists();
         $exists = Report::where('user_id', auth()->user()->id)

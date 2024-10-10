@@ -154,7 +154,19 @@ new class extends Component {
     }
 }; ?>
 
-<div x-data="{ editing: false, isImgCanceled : false }">
+<div x-data="{ 
+    editing: false, 
+    isImgCanceled : false, 
+    fnShareCode(str){
+        navigator.clipboard.writeText(str)
+            .then(() => {
+                alert('Share Link Copied to clipboard: ');
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+    } 
+    }">
     <div class="grid grid-cols-1 gap-4 pb-4 sm:grid-cols-6">
         <div class="sm:col-span-6 md:col-span-3 lg:col-span-2">
             @if (!$tag->user)
@@ -174,9 +186,13 @@ new class extends Component {
             </div>
             @endif
             <x-input x-cloak x-show="editing" class="mb-2" wire:model="name" wire:blur="update" />
-            <h1 x-show="!editing" class="break-words pb-2 text-2xl font-semibold text-gray-800">
-                {{ $name }}
-            </h1>
+            <div x-show="!editing" class="flex justify-between">
+                <h1 class="break-words pb-2 text-2xl font-semibold text-gray-800">
+                    {{ $name }}
+                </h1>
+                <x-button sm @click="fnShareCode('{{env('APP_URL') . '/t/'. $tag->share_code}}')" green icon="link"/>
+            </div>
+
             @if ($tag->user)
             <div class="flex flex-row items-center gap-1 text-gray-500">
                 <span class="font-medium text-gray-700 dark:text-gray-400">Created by:</span>
@@ -219,7 +235,7 @@ new class extends Component {
                     {{ __('Follow Item') }}
                 </x-button>
                 @else
-                <x-button wire:click="follow" primary>
+                <x-button wire:click="follow" disabled primary>
                     <span class="mr-2">
                         <x-icon name="heart" class="w-5 h-5" solid />
                     </span>
