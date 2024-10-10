@@ -70,6 +70,11 @@ class Tag extends Model
         return $this->hasMany(Ping::class)->orderBy('created_at', 'desc');
     }
 
+    public function follows(): HasMany
+    {
+        return $this->hasMany(Follow::class);
+    }
+
     // Assign random ID and share code
     protected static function boot()
     {

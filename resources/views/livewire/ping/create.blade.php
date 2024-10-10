@@ -42,6 +42,11 @@ new class extends Component {
     #[Rule('nullable|file|mimes:png,jpg,jpeg,webp|max:12288')]
     public $image;
 
+    public function requestLogin(): void
+    {
+        $this->notification()->warning($title = 'For comment, please Login!');
+    }
+
     public function save(): void
     {
         $this->authorize('create', $this->tag);
@@ -95,6 +100,8 @@ new class extends Component {
                     'is_approved' => $this->tag->auto_approve,
                 ]),
             );
+
+            $this->reset('image');
 
             $this->visible = false;
             $this->notification()->success($title = 'Comment saved!');
@@ -156,9 +163,7 @@ new class extends Component {
     </div>
 
     @if(!auth()->user())
-    <x-button class="w-full" x-on:click="open = true" x-show="!open" outline primary icon="chat-alt" disabled 
-        label="{{ __('ping.create') }}" />
-    <span style="color:red">For add comment, please login!</span><br>
+    <x-button class="w-full" outline primary icon="chat-alt" label="{{ __('ping.create') }}" wire:click="requestLogin"/>
     @else
     <x-button class="w-full" x-on:click="open = true" x-show="!open" outline primary icon="chat-alt"
         label="{{ __('ping.create') }}" />

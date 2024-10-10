@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Tag;
+use App\Models\Follow;
 use App\Enums\TagType;
 use App\Providers\RouteServiceProvider;
 
@@ -10,11 +11,14 @@ use Illuminate\Database\Eloquent\Collection;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
+use Carbon\Carbon;
 
 new class extends Component {
     use WithPagination;
     use Actions;
-
+    use WithFileUploads;
+    
     public $uid;
     public Tag $tag;
     public Collection $pings;
@@ -29,11 +33,17 @@ new class extends Component {
     public TagType $type = TagType::Traveller;
 
     public $pingLocations = [];
+    
+    #[Rule('nullable|file|mimes:png,jpg,jpeg,webp|max:12288')]
+    public $image;
 
     public $img_url = '';
+    public $old_img_url = '';
 
     #[Rule('boolean')]
     public bool $auto_approve = false;
+
+    public bool $is_followed = false;
 
     public function mount()
     {
@@ -61,6 +71,12 @@ new class extends Component {
                 // }
             }
         }
+
+        //check followed item?
+        if (auth()->id() != $this->tag->user_id && Follow::where('user_id', auth()->id())->where('tag_id', $this->tag->id)->first()) {
+            $this->is_followed = true;
+        }
+
         $this->name = $this->tag->name;
         $this->description = $this->tag->description;
         $this->type = $this->tag->type;
@@ -74,7 +90,20 @@ new class extends Component {
 
         $validated = $this->validate();
 
+        if($this->image){
+            $timestamp = Carbon::now()->format('Ymd_His');
+            $customFileName = auth()->id() . '_' . $timestamp . '.' . $this->image->getClientOriginalExtension();
+            $path = $this->image->storeAs('uploads/tags', $customFileName, 'public');
+            
+            $validated['img_url'] = '/storage/' . $path;
+        }else
+            $validated['img_url'] = '';
+
+        $this->reset('image');
+
         $this->tag->update($validated);
+        $this->dispatch('ping-created');
+
     }
 
     public function delete(): void
@@ -87,6 +116,23 @@ new class extends Component {
 
     public function follow(): void
     {
+        if(!auth()->user())
+        {
+            $this->notification()->warning($title = 'Login First!');
+            return;
+        }
+
+        //valdiated check
+        $validated = [
+            'tag_id' => $this->tag->id,
+            'user_id' => auth()->id(),
+        ];
+
+        $new_follow = Follow::create($validated);
+        $this->notification()->success($title = 'You followed item!');
+        $this->dispatch('ping-created');
+
+
 //         $validated = [
 //             'auto_approve' => !$this->auto_approve,
 //         ];
@@ -108,7 +154,7 @@ new class extends Component {
     }
 }; ?>
 
-<div x-data="{ editing: false }">
+<div x-data="{ editing: false, isImgCanceled : false }">
     <div class="grid grid-cols-1 gap-4 pb-4 sm:grid-cols-6">
         <div class="sm:col-span-6 md:col-span-3 lg:col-span-2">
             @if (!$tag->user)
@@ -165,7 +211,7 @@ new class extends Component {
                 <x-button x-show="!editing" :href="route('print-tag', ['uid' => $tag->id])" dark icon="printer" wire:navigate>Print</x-button>
                 <x-button x-show="!editing" wire:click="delete" dark icon="trash">Delete</x-button>
                 @else
-                @if(!$this->auto_approve)
+                @if(!$this->is_followed)
                 <x-button wire:click="follow" primary>
                     <span class="mr-2">
                         <x-icon name="heart" class="w-5 h-5" outlined />
@@ -193,7 +239,13 @@ new class extends Component {
             <div x-show="!editing" class="my-1">
                 <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
             </div>
+            <div x-show="editing" class="my-1">
+                <img src="{{ $img_url }}" class="inset-0 w-16 object-cover" alt="Tag image" />
+            </div>
             @endif
+            <div x-show="editing" class="my-2">
+                <x-file-uploader  wire:model.blur="image" :file="$image" rules="mimes:jpeg,png,webp" wire:blur="update" />
+            </div>
         </div>
         <div class="sm:col-span-6 md:col-span-3 lg:col-span-4">
             <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations())" />

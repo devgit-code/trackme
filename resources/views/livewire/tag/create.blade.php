@@ -39,9 +39,9 @@ new class extends Component {
         }else
             $validated['img_url'] = '';
 
-        $validated['id'] = Str::random(8);
-
         $this->reset('image');
+
+        $validated['id'] = Str::random(8);
 
         $new_tag = auth()
             ->user()

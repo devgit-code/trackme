@@ -14,6 +14,7 @@ new class extends Component {
 
     public Ping $ping;
     public Tag $tag;
+    public bool $is_owned;
 
     #[Rule('max:255')]
     public $name;
@@ -229,22 +230,13 @@ new class extends Component {
                     });
                 </script>
 
-                @can('update', $ping)
+                @if($is_owned)
                     @if($ping->is_approved == 0)
-                        <x-button sm wire:click="approve" alt="Approve Comment" negative>
-                            <span>
-                                <x-icon name="check-circle" class="w-5 h-5" outline />
-                            </span>
-                        </x-button>
+                        <x-button wire:click="approve" sm alt="Allow Comment" icon="check-circle" emerald />
                     @else
-                        <x-button sm alt="Approved" blue disabled>
-                            <span>
-                                <x-icon name="check-circle" class="w-5 h-5" solid />
-                            </span>
-                        </x-button>
+                        <x-badge sm icon="check" outline zinc label="Allowed" />
                     @endif
-                    <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
-                @endcan
+                @endif
 
                 <span>{{ $ping->user->name }}</span>
                 <span
@@ -281,7 +273,7 @@ new class extends Component {
         <p class="sm:col-span-2">{{ $ping->comment }}</p>
         @if($img_url != '')
             <div class="sm:col-span-1 flex justify-center">
-                <img src="{{ $img_url }}" class="w-16 object-cover" alt="Tag image" />
+                <img src="{{ $img_url }}" class="w-16 object-cover" alt="Ping image" />
             </div>
         @endif
 
@@ -292,10 +284,12 @@ new class extends Component {
                 <x-badge sm icon="globe" outline zinc label="{{ $ping->loc_name }}" />
             @endif
             <x-button x-cloak x-show="editing" x-on:click="editing = false" sm alt="Cancel"
-                      class="ring-2 ring-offset-2" icon="x" primary />
+                    class="ring-2 ring-offset-2" icon="x" primary />
+
             @if (auth()->id() != $ping->user_id)
                 <x-button wire:click="report" sm alt="Report this" icon="thumb-down" warning />
             @else
+                <x-button sm alt="Delete Comment" icon="trash" outline negative wire:click="delete" />
                 <x-button x-show="!editing" x-on:click="editing = true" sm alt="Edit Comment" icon="pencil" primary />
             @endif
         </div>

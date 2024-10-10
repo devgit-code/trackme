@@ -66,6 +66,6 @@ class User extends Authenticatable
 
     public function follows(): HasMany
     {
-        return $this->hasMany(Follow::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Follow::class);
     }
 }
