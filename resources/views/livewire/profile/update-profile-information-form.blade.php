@@ -10,11 +10,15 @@ new class extends Component {
     public string $email = '';
     public string $phone = '';
 
+    #[Rule('boolean')]
+    public bool $is_weekly_update = false;
+
     public function mount(): void
     {
         $this->name = auth()->user()->name;
         $this->email = auth()->user()->email;
         // $this->phone = auth()->user()->phone;
+        $this->is_weekly_update = auth()->user()->is_weekly_update;
     }
 
     public function updateProfileInformation(): void
@@ -24,17 +28,19 @@ new class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'phone' => ['required', 'string', 'max:255'],
+            'phone' => ['string', 'max:255'],
+            'is_weekly_update' => 'boolean',
         ]);
 
         $user->fill($validated);
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
+        // if ($user->isDirty('email')) {
+        //     $user->email_verified_at = null;
+        // }
 
         $user->save();
 
+        $this->notification()->success($title = 'Personal info updated!');
         $this->dispatch('profile-updated', name: $user->name);
     }
 
@@ -97,8 +103,10 @@ new class extends Component {
         </div>
 
         <div>
-            <x-input wire:model="phone" :label="__('Phone Number')" required autocomplete="phone" />
+            <x-input wire:model="phone" :label="__('Phone Number')" autocomplete="phone" />
         </div>
+
+        <x-toggle label="{{ __('Weekly Update') }}" wire:model="is_weekly_update" />
 
         <div class="flex items-center gap-4">
             <x-button primary type="submit">{{ __('Save') }}</x-button>

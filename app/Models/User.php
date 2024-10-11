@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_weekly_update'
     ];
 
     /**
@@ -67,5 +68,10 @@ class User extends Authenticatable
     public function follows(): HasMany
     {
         return $this->hasMany(Follow::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 }

@@ -23,67 +23,43 @@
 
 <body class="antialiased">
     <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/snowy-cherokee.webp') }}" alt="">
-    <div class="w-full min-h-screen backdrop-blur-sm">
+    <div class="w-full min-h-screen backdrop-blur-sm mb-3">
         <div class="container mx-auto pt-4 filter-none xl:max-w-5xl">
             <div class="flex justify-center py-6">
                 <x-application-logo text="true" shadow class="block h-12 w-auto fill-current text-neutral-50" />
             </div>
             <x-card rounded="rounded-none sm:rounded-lg">
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2 flex flex-col justify-center gap-2">
-                        @auth
-                            <h1 class="text-center text-xl font-medium">Welcome back
-                                {{ explode(' ', auth()->user()->name)[0] }}!</h1>
-                            <div class="flex flex-row flex-wrap gap-4 justify-center">
-                                <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('scan-tag') }}"
-                                    label="{{ __('Scan QR Code') }}" wire:navigate />
-                                <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('my-tags') }}"
-                                    label="{{ __('My Tags') }}" wire:navigate />
-                            </div>
-                        @endauth
-                    </div>
-                    <p class="prose">{{ __('msg.welcome') }}</p>
-                    @php 
-                    $latestPings = Ping::where('is_approved', 1)
-                                            ->select('pings.*')
-                                            ->whereIn('id', function($query){
-                                                $query->selectRaw('MAX(id)')
-                                                    ->from('pings')
-                                                    ->where('is_approved', 1)
-                                                    ->groupBy('tag_id');
-                                            })
-                                            ->with('tag')
-                                            ->orderBy('pings.created_at', 'desc')
-                                            ->get();
-                    echo($latestPings);
-                    $latestPing = Ping::latest('created_at')->first();
-                    if($latestPing)
-                    {
-                        $tag = Tag::find($latestPing->tag_id);
-                        $sample_data = json_encode($tag->getLocations());
-                    }else
-                    {
-                        $sample_data = '[[35.306389,-78.323889,"Isaac Alich\n4 days ago"], [35.53965,-82.55095,"John Smith\n2 weeks ago"], [36.085336,-80.241745,"Jane Doe\n1 month ago"]]'; 
-                    }
-                    @endphp
-                    <x-map class="h-[350px]" :locations="$sample_data" />
-
-                    <div class="sm:col-span-2">
-                        @guest
-                            <div class="flex flex-row flex-wrap gap-4 justify-center">
-                                <x-button class="w-fit" icon="qrcode" lg href="{{ route('scan-tag') }}"
-                                    label="{{ __('Scan QR Code') }}" wire:navigate />
-                                <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('login') }}"
-                                    label="{{ __('Log In') }}" wire:navigate />
-                                <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('register') }}"
-                                    label="{{ __('Register') }}" wire:navigate />
-                            </div>
-                        @endguest
-                    </div>
+                <div class="sm:col-span-2 flex flex-col justify-center gap-2">
+                    @auth
+                        <h1 class="text-center text-xl font-medium">Welcome back
+                            {{ explode(' ', auth()->user()->name)[0] }}!</h1>
+                        <div class="flex flex-row flex-wrap gap-4 justify-center">
+                            <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('scan-tag') }}"
+                                label="{{ __('Scan QR Code') }}" wire:navigate />
+                            <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('my-tags') }}"
+                                label="{{ __('My Tags') }}" wire:navigate />
+                        </div>
+                    @endauth
                 </div>
-            <hr class="my-2 bg-black">
+                
+                <p class="m-2 p-2">{{ __('msg.welcome') }}</p>
+
+                <livewire:layout.home/>
+
+                <div class="sm:col-span-2">
+                    @guest
+                        <div class="flex flex-row flex-wrap gap-4 justify-center">
+                            <x-button class="w-fit" icon="qrcode" lg href="{{ route('scan-tag') }}"
+                                label="{{ __('Scan QR Code') }}" wire:navigate />
+                            <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('login') }}"
+                                label="{{ __('Log In') }}" wire:navigate />
+                            <x-button class="w-fit" right-icon="chevron-double-right" lg href="{{ route('register') }}"
+                                label="{{ __('Register') }}" wire:navigate />
+                        </div>
+                    @endguest
+                </div>
             </x-card>
-            <div class="flex justify-center mt-8 px-0">
+            <div class="flex justify-center m-8 px-0">
                 <div class="text-center text-neutral-50">
                     <div class="flex items-center gap-4">
                         <a href="https://gitlab.com/tenten8401" class="group inline-flex items-center">
@@ -99,7 +75,7 @@
                 type="video/mp4">
         </video> --}}
 
-        <div class="hero-content grid max-w-5xl mx-auto p-0 sm:p-6 lg:p-8">
+        {{--<div class="hero-content grid max-w-5xl mx-auto p-0 sm:p-6 lg:p-8">
             <div class="flex justify-center pt-4">
                 <x-application-logo text="true" class="block h-12 w-auto fill-current text-base-100" />
             </div>
@@ -211,7 +187,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--}}
     </div>
     @livewireScriptConfig
 </body>
