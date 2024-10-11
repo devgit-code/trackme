@@ -22,9 +22,13 @@ new class extends Component {
     public $name = '';
     public $message = '';
 
-    public function pingsPaginated()
+    public function pingsPaginated($mode = 0)
     {
-        return $this->tag->pings()->paginate(10);
+        if($mode == 1)
+        {
+            return $this->tag->pings()->paginate(10);
+        }
+        return $this->tag->pings()->where('is_approved', 1)->paginate(10);
     }
 
     #[On('ping-created')]
@@ -35,8 +39,8 @@ new class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-3 mt-5">
-    @can('update', 'tag')
-        @foreach ($this->pingsPaginated() as $ping)
+    @can('update', $tag)
+        @foreach ($this->pingsPaginated(1) as $ping)
             <livewire:ping.item :ping="$ping" :is_owned="$tag->user_id == auth()->id()">
         @endforeach
         {{ $this->pingsPaginated()->links() }}

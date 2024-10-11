@@ -45,6 +45,9 @@ new class extends Component {
 
     public bool $is_followed = false;
 
+    public float $distance = 0;
+
+
     public function mount()
     {
         if (!$this->isStrRandom($this->uid, 8)) { //uid validation
@@ -71,6 +74,9 @@ new class extends Component {
                 // }
             }
         }
+
+        //calculate distance function
+        $this->distance = $this->tag->getDistance();
 
         //check followed item?
         if (auth()->id() != $this->tag->user_id && Follow::where('user_id', auth()->id())->where('tag_id', $this->tag->id)->first()) {
@@ -194,7 +200,7 @@ new class extends Component {
             </div>
 
             @if ($tag->user)
-            <div class="flex flex-row items-center gap-1 text-gray-500">
+            <div class="mt-3 flex flex-row items-center gap-1 text-gray-500">
                 <span class="font-medium text-gray-700 dark:text-gray-400">Created by:</span>
                 <x-avatar xs :src="$tag->user->gravatar" />
                 <span>{{ $tag->user->name }}</span>
@@ -207,7 +213,7 @@ new class extends Component {
             </div>
             @if ($tag->pings->first())
             @if ($tag->pings->firstWhere('loc_name', '!=', null))
-            <div class="mt-1 flex flex-row items-center gap-1 text-gray-500">
+            <div class="mt-5 flex flex-row items-center gap-1 text-gray-500">
                 <span class="font-medium text-gray-700 dark:text-gray-400">Last found:</span>
                 <x-icon name="globe" class="h-6 w-6" />
                 <span>{{ $tag->pings->firstWhere('loc_name', '!=', null)->loc_name }}</span>
@@ -219,6 +225,10 @@ new class extends Component {
                     ({{ $tag->pings->first()->created_at->diffForHumans() }})</span>
             </div>
             @endif
+            <p x-show="!editing" class="mt-5">
+                <span class="font-medium text-gray-700 dark:text-gray-400 mr-1">Distance traveled : </span>{{ round($this->distance, 2)  }}km
+            </p>
+
             <div class="my-2">
                 @can('update', $tag)
                 <x-button x-cloak x-show="editing" x-on:click="editing = !editing" dark icon="arrow-left">Leave Edit
@@ -264,7 +274,11 @@ new class extends Component {
             </div>
         </div>
         <div class="sm:col-span-6 md:col-span-3 lg:col-span-4">
-            <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations())" />
+            @can('update', $tag)
+                <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations(1))" />
+            @else
+                <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations())" />
+            @endif
             <div class="sm:col-span-4 sm:col-start-2 lg:col-span-4 lg:col-start-3">
                 <livewire:ping.create :tag="$tag" />
                 <livewire:ping.list :tag="$tag" />
