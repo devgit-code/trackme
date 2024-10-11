@@ -36,7 +36,8 @@ new class extends Component {
                                   class="hidden sm:ms-1 sm:block">Tags</span>
                         </x-nav-link>
                     @endauth
-                    @if(!auth()->user()->role == 1)
+                    @auth
+                    @if(auth()->user()->role != 1)
                     <x-nav-link :href="route('create-tag')" :active="request()->routeIs('create-tag')" wire:navigate>
                         <x-icon name="pencil-alt" class="h-5 w-5 sm:me-1" />Create<span
                               class="hidden sm:ms-1 sm:block">Tag</span>
@@ -47,6 +48,7 @@ new class extends Component {
                               class="hidden sm:ms-1 sm:block">Bulk Tags</span>
                     </x-nav-link>
                     @endif
+                    @endauth
                     <!-- <x-nav-link :href="route('scan-tag')" :active="request()->routeIs('scan-tag')" wire:navigate invisible>
                         <x-icon name="qrcode" class="h-5 w-5 sm:me-1" />Scan<span
                               class="hidden sm:ms-1 sm:block">Tag</span>
