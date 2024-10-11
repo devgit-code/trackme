@@ -196,7 +196,11 @@ new class extends Component {
                 <h1 class="break-words pb-2 text-2xl font-semibold text-gray-800">
                     {{ $name }}
                 </h1>
-                <x-button sm @click="fnShareCode('{{env('APP_URL') . '/t/'. $tag->share_code}}')" green icon="link"/>
+
+                <div>
+                    <x-button sm :href="route('print-tag', ['uid' => $tag->id])" icon="printer" sky wire:navigate></x-button>
+                    <x-button sm @click="fnShareCode('{{env('APP_URL') . '/t/'. $tag->share_code}}')" green icon="link"/>
+                </div>
             </div>
 
             @if ($tag->user)
@@ -234,7 +238,6 @@ new class extends Component {
                 <x-button x-cloak x-show="editing" x-on:click="editing = !editing" dark icon="arrow-left">Leave Edit
                     Mode</x-button>
                 <x-button x-show="!editing" x-on:click="editing = !editing" dark icon="pencil">Edit</x-button>
-                <x-button x-show="!editing" :href="route('print-tag', ['uid' => $tag->id])" dark icon="printer" wire:navigate>Print</x-button>
                 <x-button x-show="!editing" wire:click="delete" dark icon="trash">Delete</x-button>
                 @else
                 @if(!$this->is_followed)

@@ -44,7 +44,7 @@ Route::group(['middleware' => 'cors'], function () {
         ->name('view-tag');
 
     Route::view('/print/{uid}', 'print-tag')
-        ->middleware(['web'])
+        ->middleware(['auth', 'web'])
         ->name('print-tag');
 
     Route::view('/scan', 'scan-qrcode')
