@@ -72,8 +72,10 @@ new class extends Component {
         }
 
         $data = json_decode($response, true);
-        if (!empty($data[0]['Errors'])) {
+
+        if (count($data[0]['Errors'])) {
             $this->notification()->error($title = 'Wrong Zip code!');
+            return;
             // $this->dispatch('ping-created');
         }
 

@@ -15,6 +15,7 @@ new class extends Component {
     use Actions;
 
     protected $uid;
+    protected $listeners = ['refreshComponent' => '$refresh'];
 
     public Tag $tag;
     public $pings;
@@ -42,6 +43,7 @@ new class extends Component {
     {
         $this->selectedTag = Tag::find($tag_id); // Update the selected user based on the ID
         $this->sample_data = json_encode($this->selectedTag->getLocations());
+$this->dispatch('refreshComponent');
     }
 
     public function pingsPaginated($mode = 0)

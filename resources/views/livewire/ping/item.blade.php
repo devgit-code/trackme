@@ -236,7 +236,7 @@ new class extends Component {
 
                 @if($is_owned)
                     @if($ping->is_approved == 0)
-                        <x-button wire:click="approve" sm alt="Allow Comment" icon="check-circle" emerald />
+                        <x-button wire:click="approve" sm alt="Allow Comment" icon="check-circle" label="Allow Ping" emerald />
                     @else
                         <x-badge sm icon="check" outline zinc label="Allowed" />
                     @endif
