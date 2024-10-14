@@ -75,6 +75,10 @@ $this->dispatch('refreshComponent');
                             ->with('tag')
                             ->orderBy('created_at', 'desc')
                             ->get();
+
+        $totalDistance = 0;
+        foreach($latestPings as $ping)
+            $totalDistance += $ping->tag->getDistance();
         @endphp
         <div>
             <div class="mb-4 grid grid-cols-2 gap-2">
@@ -83,7 +87,7 @@ $this->dispatch('refreshComponent');
                     <span class="text-md font-medium text-blue-700">Total Track Tag </span>
                 </div>
                 <div class="text-center">
-                    <p class="text-4xl font-bold">{{Tag::count()}}<span class="text-lg font-medium"> km</span></p>
+                    <p class="text-4xl font-bold">{{round($totalDistance, 2)}}<span class="text-lg font-medium"> km</span></p>
                     <span class="text-md font-medium text-blue-700">Total Travel distance </span>
                 </div>
             </div>

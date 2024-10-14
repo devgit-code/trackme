@@ -59,7 +59,7 @@ new class extends Component {
 
     public function approve(): void
     {
-        $this->authorize('update', $this->ping);
+        // $this->authorize('update', $this->ping);
         $validated = $this->validate();
 
         $validated['is_approved'] = 1;
@@ -200,7 +200,7 @@ new class extends Component {
                         </div>
                     </div>
                 </div>
-                <!-- Optional script for modal toggle -->
+                {{--<!-- Optional script for modal toggle -->
                 <script>
                     // Open modal
                     document.getElementById('openmsgModal').addEventListener('click', function() {
@@ -232,7 +232,7 @@ new class extends Component {
                             alert("Please enter a message before confirming.");
                         }
                     });
-                </script>
+                </script>--}}
 
                 @if($is_owned)
                     @if($ping->is_approved == 0)

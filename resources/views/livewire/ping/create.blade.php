@@ -107,7 +107,7 @@ new class extends Component {
 
             $this->visible = false;
             $this->notification()->success($title = 'Comment saved!');
-            $this->dispatch('ping-created');
+            // $this->dispatch('ping-created');
         } else {
             // Create unverified account for commenter
         }
