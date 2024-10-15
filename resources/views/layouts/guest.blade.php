@@ -19,7 +19,7 @@
 </head>
 
 <body class="font-sans antialiased">
-    <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/locks-on-fence.webp') }}" alt="">
+    <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/call-to-action-bg.jpg') }}" alt="">
     <div class="w-full">
         <div class="flex justify-center py-6">
             <a href="/" wire:navigate>

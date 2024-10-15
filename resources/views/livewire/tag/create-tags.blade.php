@@ -23,7 +23,7 @@ new class extends Component {
         @foreach ($tags as $tag)
             <a href="{{ route('view-tag', ['uid' => $tag->id]) }}" wire:key="{{ $tag->id }}" wire:navigate>
                 <x-card>
-                    <span class="break-words">
+                    <span class="break-words capitalize">
                         {{ $tag->name }}
                     </span>
                     <x-map class="h-[150px]" small="true" :locations="json_encode($tag->getLocations())" />

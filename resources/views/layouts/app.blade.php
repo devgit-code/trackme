@@ -21,13 +21,13 @@
 </head>
 
 <body class="font-sans antialiased">
-    <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/snowy-cherokee.webp') }}" alt="">
+    <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/about-bg.jpg') }}" alt="">
     <div>
         <livewire:layout.navigation />
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white shadow">
+            <header class="bg-red shadow">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
@@ -41,7 +41,7 @@
             {{ $slot }}
         </main>
 
-        <div class="mt-8 flex justify-center px-0">
+        <div class="my-4 flex justify-center px-0">
             <div class="text-center text-neutral-50">
                 <div class="flex flex-col items-center">
                     <a href="https://gitlab.com/tenten8401" class="group inline-flex items-center">
