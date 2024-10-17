@@ -82,6 +82,10 @@ new #[Layout('layouts.guest')] class extends Component {
 <div>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div>
+    
+    </div>
+    <!-- <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/about-bg.jpg') }}" alt=""> -->
 
     <form wire:submit="login">
         <div class="grid gap-4">
@@ -96,10 +100,16 @@ new #[Layout('layouts.guest')] class extends Component {
             <x-button class="w-full" type="submit" spinner primary label="{{ __('Log in') }}" />
 
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </a>
+                <div class="flex justify-between">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        href="{{ route('password.request') }}" wire:navigate>
+                        {{ __('Forgot your password?') }}
+                    </a>
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        href="{{ route('register') }}" wire:navigate>
+                        {{ __('Register') }}
+                    </a>
+                </div>
             @endif
         </div>
     </form>

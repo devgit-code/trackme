@@ -173,8 +173,8 @@ new class extends Component {
             });
     } 
     }">
-    <div class="grid grid-cols-1 gap-4 pb-4 sm:grid-cols-6">
-        <div class="sm:col-span-6 md:col-span-3 lg:col-span-2">
+    <div class="">
+        <div class="grid sm:grid-cols-5 gap-2">
             @if (!$tag->user)
             <div
                 class="flex items-center p-4 border rounded-lg gap-x-3 dark:border-0 shadow-soft bg-blue-50 dark:bg-secondary-700">
@@ -266,17 +266,17 @@ new class extends Component {
 
             @if($img_url != '')
             <div x-show="!editing" class="my-1">
-                <img src="{{ $img_url }}" class="inset-0 w-64 object-cover" alt="Tag image" />
+                <img src="{{ asset($img_url) }}" class="inset-0 w-64 object-cover" alt="Tag image" />
             </div>
             <div x-show="editing" class="my-1">
-                <img src="{{ $img_url }}" class="inset-0 w-16 object-cover" alt="Tag image" />
+                <img src="{{ asset($img_url) }}" class="inset-0 w-16 object-cover" alt="Tag image" />
             </div>
             @endif
             <div x-show="editing" class="my-2">
                 <x-file-uploader  wire:model.blur="image" :file="$image" rules="mimes:jpeg,png,webp" wire:blur="update" />
             </div>
         </div>
-        <div class="sm:col-span-6 md:col-span-3 lg:col-span-4">
+        <div class="">
             @can('update', $tag)
                 <x-map class="h-[350px] mb-2" :locations="json_encode($this->tag->getLocations(1))" />
             @else

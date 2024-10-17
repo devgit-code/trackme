@@ -15,7 +15,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     @if ($followedTags->count() == 0)
         <p>{{ __('You have no tags!') }}<br><br>
         </p>

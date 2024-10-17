@@ -277,7 +277,7 @@ new class extends Component {
         <p class="sm:col-span-2">{{ $ping->comment }}</p>
         @if($img_url != '')
             <div class="sm:col-span-1 flex justify-center">
-                <img src="{{ $img_url }}" class="w-16 object-cover" alt="Ping image" />
+                <img src="{{ asset($img_url) }}" class="w-16 object-cover" alt="Ping image" />
             </div>
         @endif
 

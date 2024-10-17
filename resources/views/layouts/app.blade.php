@@ -16,11 +16,14 @@
     @livewireStyles()
     @livewireScriptConfig
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script defer data-domain="trackme.info" src="https://plausible.isaacs.site/js/script.js"></script>
-    
+    <!-- <script defer data-domain="trackme.info" src="https://plausible.isaacs.site/js/script.js"></script> -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-manrope antialiased">
     <img class="custom-bg-fix" src="{{ Vite::asset('resources/images/about-bg.jpg') }}" alt="">
     <div>
         <livewire:layout.navigation />
@@ -37,11 +40,17 @@
         <x-notifications position="top-center" />
 
         <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+        <div class="grid sm:grid-cols-5 ap-g2 ">
+            <div class="col-span-2 hidden sm:block relative ">
+                <p class="p-4 m-2 mt-10 rounded text-xl leading-9 indent-3 absolute inset-3 h-fit z-10 bg-gray-200/60 ">{{ __('msg.welcome') }}</p>
+                <img class="h-full object-cover blur-sm absolute inset-0 z-0" src="{{ Vite::asset('resources/images/screen2.png') }}" alt="">
+            </div>
+            <main class="col-span-3 pb-6">
+                {{ $slot }}
+            </main>
+        </div>
 
-        <div class="my-4 flex justify-center px-0">
+        <!-- <div class="my-4 flex justify-center px-0">
             <div class="text-center text-neutral-50">
                 <div class="flex flex-col items-center">
                     <a href="https://gitlab.com/tenten8401" class="group inline-flex items-center">
@@ -53,8 +62,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </body>
-
 </html>

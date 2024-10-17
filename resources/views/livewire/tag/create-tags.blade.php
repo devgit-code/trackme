@@ -13,7 +13,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     @if ($tags->count() == 0)
         <p>{{ __('You have no tags!') }}<br><br>
             <x-button href="{{ route('create-tag') }}" icon="pencil" primary label="{{ __('Create Tag') }}"

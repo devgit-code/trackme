@@ -27,6 +27,8 @@ new class extends Component {
     public $sample_data;
     public $totalDistance = 0;
 
+    public $is_tag_null = false;
+
     public function mount(){
         $latestPing = Ping::latest('created_at')->first();
         if($latestPing)
@@ -35,7 +37,8 @@ new class extends Component {
             $this->sample_data = json_encode($this->selectedTag->getLocations());
 
         }else{
-            $this->selectedTag = null;
+            // $this->selectedTag = Tag();
+            $this->is_tag_null = true;
             $this->sample_data = '[[35.306389,-78.323889,"Isaac Alich\n4 days ago"], [35.53965,-82.55095,"John Smith\n2 weeks ago"], [36.085336,-80.241745,"Jane Doe\n1 month ago"]]';
         }
 
@@ -50,7 +53,7 @@ new class extends Component {
     {
         $this->selectedTag = Tag::find($tag_id); // Update the selected user based on the ID
         $this->sample_data = json_encode($this->selectedTag->getLocations());
-$this->dispatch('refreshComponent');
+        $this->dispatch('refreshComponent');
     }
 
     public function pingsPaginated($mode = 0)
@@ -68,9 +71,20 @@ $this->dispatch('refreshComponent');
     }
 }; ?>
 
-<div class="flex flex-col gap-3 my-5">
-    <div class="grid sm:grid-cols-2 gap-4">
-        <x-map class="h-[350px]" :locations="$this->sample_data" />
+<div class="flex flex-col gap-3 my-2">
+    <div class="">
+        <div class="mb-4 grid sm:grid-cols-2 gap-2 text-orange-400/90">
+            <div class="text-center">
+                <p class="text-4xl font-bold mb-2">{{Tag::count()}}</p>
+                <span class="text-md font-medium text-gray-400">Created Tag </span>
+            </div>
+            <div class="text-center">
+                <p class="text-4xl font-bold mb-2">{{round($this->totalDistance, 2)}}<span class="text-lg font-medium"> km</span></p>
+                <span class="text-md font-medium text-gray-400">Travel distance </span>
+            </div>
+        </div>
+        
+        <x-map class="mt-2 h-[350px]" :locations="$this->sample_data" />
 
         @php
         $latestPings = Ping::where('is_approved', 1)
@@ -88,16 +102,10 @@ $this->dispatch('refreshComponent');
         @endphp
 
         <div>
-            <div class="mb-4 grid sm:grid-cols-2 gap-2">
-                <div class="text-center">
-                    <p class="text-4xl font-bold">{{Tag::count()}}</p>
-                    <span class="text-md font-medium text-blue-700">Total Track Tag </span>
-                </div>
-                <div class="text-center">
-                    <p class="text-4xl font-bold">{{round($this->totalDistance, 2)}}<span class="text-lg font-medium"> km</span></p>
-                    <span class="text-md font-medium text-blue-700">Total Travel distance </span>
-                </div>
-            </div>
+            @if($this->is_tag_null)
+                <p class="py-6 text-center">{{__('No tracked tags. You will be the first person!')}}</p>
+            @endif
+
             @if($selectedTag)
             <div class="overflow-x-auto mt-5 ">
                 @foreach($latestPings as $ping)
