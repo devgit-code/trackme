@@ -137,6 +137,8 @@ new class extends Component {
             <x-input wire:model="code" required :label="__('ping.code')" />
             <x-file-uploader wire:model="image" :file="$image" rules="mimes:jpeg,png,webp"/>
 
+            <x-input wire:model="code" required :label="__('ping.code')"/>
+
             <div class="flex flex-row flex-wrap content-center justify-between gap-4">
                 <div class="grid content-center">
                     <x-toggle md :label="__('ping.new-location')" x-data="{ lat: $wire.entangle('lat', true), lon: $wire.entangle('lon', true), accuracy: $wire.entangle('accuracy', true) }" wire:model="trackLocation"

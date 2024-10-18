@@ -22,8 +22,7 @@ class Report extends Model
      */
     protected $fillable = [
         'ping_id',
-        'user_id',
-        'reason'
+        'user_id'
     ];
 
     /**
