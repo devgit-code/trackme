@@ -41,9 +41,9 @@
 
         <!-- Page Content -->
         <div class="grid sm:grid-cols-5 ap-g2 ">
-            <div class="col-span-2 hidden sm:block relative ">
+            <div class="col-span-2 hidden sm:block relative w-full min-h-screen">
                 <p class="p-4 m-2 mt-10 rounded text-xl leading-9 indent-3 absolute inset-3 h-fit z-10 bg-gray-200/60 ">{{ __('msg.welcome') }}</p>
-                <img class="h-full object-cover blur-sm absolute inset-0 z-0" src="{{ Vite::asset('resources/images/screen2.png') }}" alt="">
+                <img class="absolute w-full h-full object-cover inset-0 z-0 blur-sm " src="{{ Vite::asset('resources/images/screen2.png') }}" alt="">
             </div>
             <main class="col-span-3 pb-6">
                 {{ $slot }}

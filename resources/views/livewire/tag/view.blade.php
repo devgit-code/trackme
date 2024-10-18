@@ -174,7 +174,7 @@ new class extends Component {
     } 
     }">
     <div class="">
-        <div class="grid sm:grid-cols-5 gap-2">
+        <div class="">
             @if (!$tag->user)
             <div
                 class="flex items-center p-4 border rounded-lg gap-x-3 dark:border-0 shadow-soft bg-blue-50 dark:bg-secondary-700">
