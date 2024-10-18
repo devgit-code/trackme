@@ -21,12 +21,15 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: colors.indigo,
+                primary: colors.blue,
                 secondary: colors.gray,
                 positive: colors.emerald,
                 negative: colors.red,
                 warning: colors.amber,
-                info: colors.blue
+                info: colors.indigo
+            },
+            fontFamily: {
+                manrope: ['Manrope', 'sans-serif'],
             },
         },
     },

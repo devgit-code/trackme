@@ -16,12 +16,16 @@ new class extends Component {
 
     public TagType $type = TagType::Traveller;
 
+    public $amount = 5;
+    public $description;
+
     public function mount()
     {
         $this->tag = Tag::findOrFail($this->uid);
+        $this->description = $this->tag->description;
     }
 }; ?>
-<div x-data="{ layout: 'vertical', text: 'I\'m travelling! Scan me to track my journey!', show_name: true, show_author: true, show_created: true, scale: 100, amount: 5 }">
+<div x-data="{ layout: 'vertical', text: @entangle('description'), show_name: true, show_author: true, show_created: true, scale: 100, amount: @entangle('amount') }">
     <div class="flex flex-col gap-4">
         <div class="flex flex-row gap-4">
             <div class="flex flex-grow flex-col gap-1">
@@ -35,9 +39,11 @@ new class extends Component {
                 <x-radio label="Vertical Layout" value="vertical" x-model="layout" />
             </div>
         </div>
-        <div class="flex flex-row gap-2">
-            <div><x-inputs.number min="10" max="1000" x-model="scale" label="Scale" /></div>
-            <div><x-inputs.number min="1" x-model="amount" label="Amount" /></div>
+        <div class="flex flex-row gap-2 justify-between">
+            <div class="flex flex-row gap-2" >
+                <div><x-inputs.number min="10" max="1000" x-model="scale" label="Scale" /></div>
+                <div><x-inputs.number min="1" x-model="amount" label="Amount" /></div>
+            </div>
             <x-button md x-on:click="printElement($refs.printable)" class="w-1/3" icon="printer">Print</x-button>
         </div>
         <div class="columns-full" x-ref="printable">

@@ -2,10 +2,14 @@
 
 use App\Enums\TagType;
 use App\Models\Tag;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
 use Livewire\Volt\Component;
+use WireUi\Traits\Actions;
 
 new class extends Component {
+    use Actions;
+
     #[Rule('required|string|max:255')]
     public string $name = '';
 
@@ -20,17 +24,14 @@ new class extends Component {
     public function save(): void
     {
         $validated = $this->validate();
+        $validated['img_url'] = '';
 
         for ($i = 0; $i < $this->amount; $i++) {
-            $new_tag = Tag::create($validated);
-            print_r($new_tag);
+            $validated['id'] = Str::random(8);
+            auth()->user()->tags()->create($validated);
         }
 
-        // $new_tag = auth()
-        //     ->user()
-        //     ->tags()
-        //     ->create($validated);
-
+        $this->notification()->success($title = 'Bulk Tags Created!');
         // $this->redirect(route('view-tag', ['uid' => $new_tag->id]), navigate: true);
     }
 }; ?>

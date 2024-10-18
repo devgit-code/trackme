@@ -18,19 +18,7 @@ $tags = Tag::all();
             
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                 <div class="max-w-lg">
-                    <x-list-item :itemData="$tags"/>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                <div class="max-w-lg">
-                    <livewire:tag.showTable />
-                </div>
-            </div>
-
-            <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                <div class="max-w-lg">
-                    <livewire:profile.send-message-form />
+                    <livewire:profile.statistic />
                 </div>
             </div>
 
@@ -46,17 +34,9 @@ $tags = Tag::all();
                 </div>
             </div>
 
-            <div class="bg-white shadow sm:rounded-lg sm:p-8">
+            {{--<div class="bg-white shadow sm:rounded-lg sm:p-8">
                 <div class="max-w-lg">
-                    <header>
-                        <h2 class="text-lg font-medium text-gray-900">
-                            {{ __('Statistics') }}
-                        </h2>
-
-                        <p class="mt-1 text-sm text-gray-600">
-                            {{ __('This shows the statistcs for User and Item') }}
-                        </p>
-                    </header>
+                
                     <div class="mt-5">
                         <button id="openModalBtn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
                             Show Statistics
@@ -88,7 +68,7 @@ $tags = Tag::all();
                         </script>
                     </div>
                 </div>
-            </div>
+            </div>--}}
 
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                 <div class="max-w-lg">

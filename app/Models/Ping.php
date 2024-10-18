@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Computed;
@@ -28,20 +29,22 @@ class Ping extends Model
         'lon',
         'loc_name',
         'accuracy',
-        'ip_address'
-    ];
+        'ip_address',
+        'is_approved',
+        'img_url',
+        ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'tag_id',
-        'user_id',
-        'loc_name',
-        'ip_address'
-    ];
+        /**
+        * The attributes that should be hidden for serialization.
+        *
+        * @var array<int, string>
+        */
+        protected $hidden = [
+            // 'tag_id',
+            // 'user_id',
+            'loc_name',
+            'ip_address'
+        ];
 
     protected $dispatchesEvents = [
         'created' => PingCreated::class,
@@ -77,5 +80,12 @@ class Ping extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    
+    #[Computed]
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class)->orderBy('created_at', 'desc');
     }
 }

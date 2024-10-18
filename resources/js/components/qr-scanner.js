@@ -3,7 +3,7 @@ document.addEventListener('livewire:navigated', () => {
         const QrScanner = (await import('qr-scanner')).default;
         function processQR(result) {
             // const errorModal = new bootstrap.Modal(document.getElementById('qrErrorModal'));
-            if (result.data && result.data.startsWith("https://trackme.info")) {
+            if (result.data && result.data.startsWith("{{env('APP_URL')}}")) {
                 qrScanner.destroy();
                 window.location.href = result.data;
             } else {

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->float('lon', 10, 6);
             $table->integer('accuracy');
             $table->string('ip_address', 64);
+            $table->tinyInteger('is_approved')->default(false);
+            $table->string('loc_name', 64)->nullable();
+            $table->string('img_url')->nullable();
             $table->timestamps();
         });
     }

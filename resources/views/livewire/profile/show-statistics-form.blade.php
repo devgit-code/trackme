@@ -58,7 +58,7 @@ new class extends Component {
             <p class="mt-1 text-md text-gray-600">{{ __('City, State: Shawano County, WI') }}</p>
             <p class="mt-1 text-md text-gray-600">{{ __('Age: 35') }}</p>
             <p class="mt-1 text-md text-gray-600">{{ __('Peopel Generally consider me: a Family') }}</p>
-            <p class="mt-1 text-md text-gray-600">{{ __('E-mail address: ') }}{{auth()->user()->email}}</p>
+            <p class="mt-1 text-md text-gray-600">{{ __('E-mail address: ') }}</p> <?php //{{auth()->user()->email?>
             <p class="mt-1 text-md text-gray-600">{{ __('Social Networking:') }}</p>
         </div>
     </div>

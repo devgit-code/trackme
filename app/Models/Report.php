@@ -22,7 +22,7 @@ class Report extends Model
      */
     protected $fillable = [
         'ping_id',
-        'user_id',
+        'user_id'
     ];
 
     /**
@@ -31,11 +31,16 @@ class Report extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_id',
+        'id',
     ];
 
-    protected $dispatchesEvents = [
-        'created' => PingCreated::class,
-    ];
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function ping(): BelongsTo
+    {
+        return $this->belongsTo(Ping::class);
+    }
 }
